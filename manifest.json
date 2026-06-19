@@ -1,0 +1,16 @@
+{
+  "name": "ポケモン クイズ - だれだ？このポケモン",
+  "short_name": "ポケクイズ",
+  "description": "ポケモンの シルエットを あてる こども向け クイズゲーム",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3b4cca",
+  "theme_color": "#3b4cca",
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

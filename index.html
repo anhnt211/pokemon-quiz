@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ポケクイズ" />
+  <meta name="theme-color" content="#3b4cca" />
+  <title>ポケモン クイズ | だれだ？このポケモン</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
+
+  <!-- CSS tách riêng -->
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <!-- ============ HOME ============ -->
+  <div class="screen" id="home-screen">
+    <div class="home-inner">
+      <div class="home-logo">
+        <h1>ポケモン クイズ</h1>
+        <p>だれだ？このポケモン！</p>
+      </div>
+
+      <!-- Trainer Card -->
+      <div class="trainer-card">
+        <div class="trainer-top">
+          <div class="trainer-rank"><small>トレーナーランク</small><span id="trainer-rank">ルーキートレーナー</span></div>
+          <div class="trainer-candy">🍬 <span id="home-candy">0</span></div>
+        </div>
+        <div class="trainer-stats">
+          <span>📕 ずかん: <b id="stat-caught">0</b></span>
+          <span>✨ シャイニー: <b id="stat-shiny">0</b></span>
+          <span>⭐ スコア: <b id="home-score">0</b></span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>ずかん かんせいど</span><span id="progress-pct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- Daily Missions -->
+      <div class="mission-box">
+        <div class="mission-title">📜 オーキド博士の チャレンジ</div>
+        <div id="mission-list"></div>
+      </div>
+
+      <!-- Quiz mode -->
+      <button class="quiz-launch" id="quiz-launch">🧠 スーパークイズ モード<small>タイプ・ばんごう・おもさ クイズ！</small></button>
+
+      <!-- Adventure Map -->
+      <div class="section-label">🗺️ ぼうけんマップ — ちほうを えらぼう！</div>
+      <div class="adventure-map" id="adventure-map"></div>
+    </div>
+  </div>
+
+  <!-- ============ GAME ============ -->
+  <div class="screen" id="game-screen" style="display:none;">
+    <main class="game-card">
+      <header class="status-bar">
+        <div class="left-group"><button class="back-btn" id="back-btn">← もどる</button></div>
+        <div class="right-group">
+          <button class="dex-btn" id="dex-open-btn">📕 ずかん</button>
+          <div class="score">⭐ <span id="score">0</span></div>
+        </div>
+      </header>
+      <div class="title-area">
+        <span class="region-badge">🗺️ <span id="region-name">カントー地方</span></span>
+        <div class="quiz-title">だれだ？このポケモン！</div>
+      </div>
+      <div class="image-stage" id="image-stage">
+        <div class="sparkle-layer" id="sparkle-layer"></div>
+        <img id="pokemon-image" class="silhouette" alt="Pokémon silhouette" />
+      </div>
+      <p id="status-text">...</p>
+      <div class="options-grid" id="options-grid">
+        <button class="btn-option" disabled>？</button>
+        <button class="btn-option" disabled>？</button>
+        <button class="btn-option" disabled>？</button>
+        <button class="btn-option" disabled>？</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ QUIZ ============ -->
+  <div class="screen" id="quiz-screen" style="display:none;">
+    <main class="game-card">
+      <header class="status-bar">
+        <div class="left-group"><button class="back-btn" id="quiz-back-btn">← もどる</button></div>
+        <div class="right-group">
+          <div class="progress-pill" id="quiz-progress">だい 1 / 5 もん</div>
+          <div class="candy-pill">🍬 <span id="quiz-candy">0</span></div>
+        </div>
+      </header>
+      <div class="title-area"><span class="region-badge" id="quiz-range">クイズ</span></div>
+      <div id="quiz-question">...</div>
+      <p id="quiz-status"></p>
+      <div class="options-grid" id="quiz-options">
+        <button class="btn-option">？</button>
+        <button class="btn-option">？</button>
+        <button class="btn-option">？</button>
+        <button class="btn-option">？</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Popups -->
+  <div class="catch-popup" id="catch-popup"><div class="bubble" id="catch-bubble">🎉 やったね！<span class="big" id="catch-popup-text">◯◯</span></div></div>
+  <div class="oak-popup" id="oak-popup">よくやった！ オーキド博士から ごほうびだ！<br><span class="candy">🍬 +50</span></div>
+  <div class="unlock-popup" id="unlock-popup"></div>
+
+  <div class="dex-overlay" id="dex-overlay">
+    <div class="dex-panel">
+      <div class="dex-header">
+        <h2>📕 <span id="dex-region-name">ポケモンずかん</span></h2>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="caught-count" id="dex-count">0 / 0</span>
+          <button class="dex-close" id="dex-close-btn" aria-label="閉じる">×</button>
+        </div>
+      </div>
+      <div class="dex-grid" id="dex-grid"></div>
+    </div>
+  </div>
+
+  <!-- ============ JAVASCRIPT (tách module, nạp theo thứ tự) ============ -->
+  <script src="./js/config.js"></script>
+  <script src="./js/dom.js"></script>
+  <script src="./js/state.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/game.js"></script>
+  <script src="./js/quiz.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
