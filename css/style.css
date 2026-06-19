@@ -7,14 +7,16 @@
   --shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none; }
-html, body { height:100%; }
+html { height:100%; }
 body {
   font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Segoe UI",system-ui,sans-serif;
   background:linear-gradient(160deg,var(--poke-blue) 0%,var(--poke-blue-dark) 100%);
-  display:flex; align-items:center; justify-content:center;
+  display:flex; justify-content:center;
   min-height:100vh; min-height:100dvh; padding:16px; color:var(--text-dark); overflow-x:hidden;
 }
-.screen { width:100%; max-width:500px; }
+/* margin:auto -> căn giữa khi vừa màn hình, TỰ CUỘN (không cắt phần trên) khi nội dung dài.
+   Đây là cách an toàn thay cho align-items:center vốn cắt mất phần đầu trên iPad. */
+.screen { width:100%; max-width:500px; margin:auto; }
 
 /* ===== HOME ===== */
 .home-inner {
