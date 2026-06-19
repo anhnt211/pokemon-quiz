@@ -4,7 +4,7 @@
    - PokéAPI:  stale-while-revalidate (dùng cache, cập nhật nền)
    - Ảnh GitHub: cache-first (ảnh đã xem -> lưu lại để xem offline)
    ===================================================================== */
-const CACHE = "poke-quiz-v1";
+const CACHE = "poke-quiz-v3";
 
 const APP_SHELL = [
   "./",
@@ -51,6 +51,20 @@ async function cacheFirst(request) {
     }
     return res;
   } catch (e) {
+    return cached || Response.error();
+  }
+}
+
+/* Network-first: ưu tiên bản mới trên mạng; offline mới dùng cache.
+   Dùng cho app shell (HTML/CSS/JS) để tránh kẹt phiên bản cũ trong cache. */
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE);
+  try {
+    const res = await fetch(request);
+    if (res && res.status === 200) cache.put(request, res.clone());
+    return res;
+  } catch (e) {
+    const cached = await cache.match(request);
     return cached || Response.error();
   }
 }
