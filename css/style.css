@@ -7,16 +7,17 @@
   --shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none; }
-html { height:100%; }
+/* Bố cục khối thuần: KHÔNG đặt height cố định, KHÔNG đặt overflow trên html/body.
+   Đây là cách cuộn dọc đáng tin cậy nhất trên mọi trình duyệt (kể cả iOS Safari).
+   (overflow-x:hidden ở html/body từng biến chúng thành vùng cuộn riêng và khoá cuộn dọc.) */
 body {
   font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Segoe UI",system-ui,sans-serif;
   background:linear-gradient(160deg,var(--poke-blue) 0%,var(--poke-blue-dark) 100%);
-  display:flex; justify-content:center;
-  min-height:100vh; min-height:100dvh; padding:16px; color:var(--text-dark); overflow-x:hidden;
+  min-height:100vh; min-height:100dvh;
+  padding:16px; color:var(--text-dark);
 }
-/* margin:auto -> căn giữa khi vừa màn hình, TỰ CUỘN (không cắt phần trên) khi nội dung dài.
-   Đây là cách an toàn thay cho align-items:center vốn cắt mất phần đầu trên iPad. */
-.screen { width:100%; max-width:500px; margin:auto; }
+/* Căn giữa NGANG bằng margin auto; chiều dọc trang tự cuộn, không bao giờ cắt nội dung. */
+.screen { width:100%; max-width:500px; margin:0 auto; }
 
 /* ===== HOME ===== */
 .home-inner {
