@@ -3,26 +3,43 @@
    PHOTO STUDIO — フォトスタジオ: chọn Pokémon đã bắt + 10 nền CSS, chụp ảnh
    ===================================================================== */
 
-const PHOTO_BGS = [
-  { n: 1,  label: "カントーの草原" },
-  { n: 2,  label: "ほのおの火山" },
-  { n: 3,  label: "みずの海岸" },
-  { n: 4,  label: "でんきの街" },
-  { n: 5,  label: "しんぴの森" },
-  { n: 6,  label: "ふぶきの雪山" },
-  { n: 7,  label: "いわの洞窟" },
-  { n: 8,  label: "ドラゴン谷" },
-  { n: 9,  label: "ほうおうの霊殿" },
-  { n: 10, label: "宇宙スペース" }
+/* 10 ảnh phong cảnh thật (đặt trong ./backgrounds/). c1/c2 = gradient dự phòng nếu thiếu ảnh. */
+const studioBackgrounds = [
+  { id: 'grass',   name: 'カントーの草原', url: './backgrounds/bg_grass.png',   c1: '#bfe88a', c2: '#5a9e34' },
+  { id: 'volcano', name: 'ほのおの火山',   url: './backgrounds/bg_volcano.png', c1: '#ff8a50', c2: '#7a1500' },
+  { id: 'beach',   name: 'みずの海岸',     url: './backgrounds/bg_beach.png',   c1: '#7fd7ff', c2: '#f3c14e' },
+  { id: 'city',    name: 'でんきの街',     url: './backgrounds/bg_city.png',    c1: '#3a1d6e', c2: '#120630' },
+  { id: 'forest',  name: 'しんぴの森',     url: './backgrounds/bg_forest.png',  c1: '#1b5e20', c2: '#03160a' },
+  { id: 'snow',    name: 'ふぶきの雪山',   url: './backgrounds/bg_snow.png',    c1: '#cfe0ea', c2: '#8499a8' },
+  { id: 'cave',    name: 'いわの洞窟',     url: './backgrounds/bg_cave.png',    c1: '#5a4a6e', c2: '#1c1426' },
+  { id: 'valley',  name: 'ドラゴン谷',     url: './backgrounds/bg_valley.png',  c1: '#3a4756', c2: '#171426' },
+  { id: 'temple',  name: 'ほうおうの霊殿', url: './backgrounds/bg_temple.png',  c1: '#f4663c', c2: '#5b2a6e' },
+  { id: 'space',   name: '宇宙スペース',   url: './backgrounds/bg_space.png',   c1: '#1a0b3d', c2: '#000000' }
 ];
 
-let photoPokeId = null, photoBg = 1, photoIsShiny = false;
+/* Cache Image để vẽ lên canvas khi lưu Album (ảnh nội bộ -> không vướng CORS) */
+const bgImgCache = {};
+function preloadBgImages() {
+  studioBackgrounds.forEach(bg => {
+    if (bgImgCache[bg.id]) return;
+    const img = new Image();
+    img.src = bg.url;
+    bgImgCache[bg.id] = img;
+  });
+}
+/* Nền hiển thị = ảnh thật (trên) + gradient dự phòng (dưới) -> thiếu ảnh vẫn đẹp */
+function bgCss(bg) {
+  return `url("${bg.url}"), linear-gradient(180deg, ${bg.c1} 0%, ${bg.c2} 100%)`;
+}
+
+let photoPokeId = null, photoBg = 0, photoIsShiny = false;
 
 const ALBUM_KEY = "pokeQuizAlbum";
 const ALBUM_MAX = 18;   // giới hạn để không đầy Local Storage
 
 /* Vào màn Photo Studio */
 function enterPhoto() {
+  preloadBgImages();
   showScreen("photo");
   photoAlbum.style.display = "none";
   photoMainHeader.style.display = "";
@@ -54,15 +71,15 @@ function renderPhotoChooser() {
 
 /* Bước 2: vào studio với Pokémon đã chọn */
 async function selectPhotoPokemon(id, isShiny) {
-  photoPokeId = id; photoIsShiny = isShiny; photoBg = 1;
+  photoPokeId = id; photoIsShiny = isShiny; photoBg = 0;
   photoChoose.style.display = "none";
   photoStudio.style.display = "block";
   photoStage.classList.remove("captured");
   photoHint.textContent = "カメラボタンを タップ！";
   photoPoke.crossOrigin = "anonymous";   // để vẽ được lên canvas (cần CORS)
   photoPoke.src = isShiny ? shinyArtworkUrl(id) : artworkUrl(id);
-  setPhotoBg(1);
   renderBgPicker();
+  setPhotoBg(0);
   photoCaption.textContent = "…";
   try {
     const nm = await getJapaneseName(id);
@@ -70,23 +87,28 @@ async function selectPhotoPokemon(id, isShiny) {
   } catch (e) { photoCaption.textContent = "No." + pad(id); }
 }
 
-/* Đổi nền */
-function setPhotoBg(n) {
-  photoBg = n;
-  photoStage.className = "photo-stage photo-bg-" + n;   // bỏ trạng thái 'captured' khi đổi nền
+/* Đổi nền: gán trực tiếp ảnh cho khung Studio chính (#photo-stage) */
+function setPhotoBg(i) {
+  photoBg = i;
+  const bg = studioBackgrounds[i];
+  photoStage.className = "photo-stage";              // bỏ trạng thái 'captured' khi đổi nền
+  photoStage.style.backgroundImage = bgCss(bg);
   photoHint.textContent = "カメラボタンを タップ！";
-  if (bgPicker) bgPicker.querySelectorAll(".bg-opt").forEach(el => el.classList.toggle("sel", +el.dataset.n === n));
+  if (bgPicker) bgPicker.querySelectorAll(".bg-opt").forEach(el => el.classList.toggle("sel", +el.dataset.i === i));
 }
 
-/* Lưới 10 nền để chọn */
+/* Lưới 10 nền (thumbnail đổi luôn sang ảnh tương ứng) */
 function renderBgPicker() {
   bgPicker.innerHTML = "";
-  PHOTO_BGS.forEach(b => {
+  studioBackgrounds.forEach((bg, i) => {
     const opt = document.createElement("button");
-    opt.className = "bg-opt photo-bg-" + b.n + (b.n === photoBg ? " sel" : "");
-    opt.dataset.n = b.n;
-    opt.innerHTML = `<span class="bg-label">${b.label}</span>`;
-    opt.addEventListener("click", () => setPhotoBg(b.n));
+    opt.className = "bg-opt" + (i === photoBg ? " sel" : "");
+    opt.dataset.i = i;
+    opt.style.backgroundImage = bgCss(bg);
+    opt.style.backgroundSize = "cover";
+    opt.style.backgroundPosition = "center";
+    opt.innerHTML = `<span class="bg-label">${bg.name}</span>`;
+    opt.addEventListener("click", () => setPhotoBg(i));
     bgPicker.appendChild(opt);
   });
 }
@@ -151,7 +173,7 @@ function renderPhotoToCanvas() {
   c.width = W; c.height = H;
   const ctx = c.getContext("2d");
 
-  drawPhotoBackground(ctx, photoBg, W, H);
+  drawStudioBackground(ctx, studioBackgrounds[photoBg], W, H);
 
   if (photoPoke.complete && photoPoke.naturalWidth > 0) {
     const ratio = photoPoke.naturalHeight / photoPoke.naturalWidth;
@@ -179,75 +201,23 @@ function renderPhotoToCanvas() {
   catch (e) { console.warn("Không xuất được ảnh (CORS):", e); return null; }
 }
 
-/* Vẽ lại 10 bối cảnh (bản tĩnh) trên canvas */
-function drawPhotoBackground(ctx, n, W, H) {
-  const lin = (stops) => { const g = ctx.createLinearGradient(0, 0, 0, H); stops.forEach(s => g.addColorStop(s[0], s[1])); return g; };
-  const fill = () => ctx.fillRect(0, 0, W, H);
-  const ell = (cx, cy, rx, ry, color) => { ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.fill(); };
-  const dot = (x, y, r, color) => { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); };
-
-  switch (n) {
-    case 1:
-      ctx.fillStyle = lin([[0, '#9fd8ff'], [0.38, '#e8f7ff'], [0.52, '#cdeebf'], [0.7, '#9fd36a'], [1, '#6cae3e']]); fill();
-      dot(W * 0.78, H * 0.2, W * 0.075, '#fff7c0');
-      ell(W * 0.5, H * 1.25, W * 0.78, H * 0.42, '#4f8f2c');
-      ell(W * 0.18, H * 1.16, W * 0.62, H * 0.36, '#7cc04a');
-      ell(W * 0.84, H * 1.2, W * 0.6, H * 0.34, '#5fa337');
-      break;
-    case 2:
-      ctx.fillStyle = lin([[0, '#1a0606'], [0.35, '#7a1500'], [0.62, '#c62828'], [1, '#ff7043']]); fill();
-      { const g = ctx.createRadialGradient(W * 0.5, H, 0, W * 0.5, H, W * 0.6); g.addColorStop(0, 'rgba(255,213,79,0.8)'); g.addColorStop(1, 'rgba(255,213,79,0)'); ctx.fillStyle = g; fill(); }
-      break;
-    case 3:
-      { const g1 = ctx.createLinearGradient(0, 0, 0, H * 0.3); g1.addColorStop(0, '#7fd7ff'); g1.addColorStop(1, '#aef0ff'); ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H * 0.3); }
-      { const g2 = ctx.createLinearGradient(0, H * 0.3, 0, H * 0.56); g2.addColorStop(0, '#16c2e8'); g2.addColorStop(1, '#0288d1'); ctx.fillStyle = g2; ctx.fillRect(0, H * 0.3, W, H * 0.26); }
-      { const g3 = ctx.createLinearGradient(0, H * 0.56, 0, H); g3.addColorStop(0, '#ffe082'); g3.addColorStop(1, '#f3c14e'); ctx.fillStyle = g3; ctx.fillRect(0, H * 0.56, W, H * 0.44); }
-      ell(W * 0.28, H * 0.13, W * 0.13, H * 0.05, 'rgba(255,255,255,0.9)');
-      ell(W * 0.62, H * 0.1, W * 0.1, H * 0.04, 'rgba(255,255,255,0.85)');
-      ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.fillRect(0, H * 0.55, W, 3);
-      break;
-    case 4:
-      ctx.fillStyle = lin([[0, '#1a0b3a'], [0.45, '#2a1060'], [1, '#120630']]); fill();
-      { const g = ctx.createRadialGradient(W * 0.5, H * 0.28, 0, W * 0.5, H * 0.28, W * 0.5); g.addColorStop(0, 'rgba(150,70,230,0.5)'); g.addColorStop(1, 'rgba(150,70,230,0)'); ctx.fillStyle = g; fill(); }
-      ctx.fillStyle = '#0c0526';
-      [0.42, 0.18, 0.46, 0.1, 0.5, 0.22, 0.48, 0.14, 0.44].forEach((h, i) => { const bw = W / 9; ctx.fillRect(i * bw, H - H * h, bw - 3, H * h); });
-      break;
-    case 5:
-      ctx.fillStyle = lin([[0, '#0e3b1e'], [0.55, '#072a14'], [1, '#03160a']]); fill();
-      ctx.strokeStyle = 'rgba(200,255,180,0.12)'; ctx.lineWidth = 14;
-      for (let i = -2; i < 8; i++) { ctx.beginPath(); ctx.moveTo(i * 60, -20); ctx.lineTo(i * 60 + 160, H + 20); ctx.stroke(); }
-      ['#d4ff5a', '#b2ff59', '#eaff8a', '#c6ff00'].forEach((c, i) => dot(W * (0.2 + i * 0.2), H * (0.4 + (i % 2) * 0.18), 3, c));
-      break;
-    case 6:
-      ctx.fillStyle = lin([[0, '#9fb2c0'], [0.4, '#cfe0ea'], [0.7, '#eef5fa'], [1, '#dfe9f0']]); fill();
-      ctx.fillStyle = '#8499a8';
-      ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, H * 0.7); ctx.lineTo(W * 0.2, H * 0.42); ctx.lineTo(W * 0.4, H * 0.62); ctx.lineTo(W * 0.55, H * 0.36); ctx.lineTo(W * 0.72, H * 0.58); ctx.lineTo(W, H * 0.5); ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
-      for (let i = 0; i < 8; i++) dot(W * (0.1 + i * 0.11), H * (0.15 + (i % 3) * 0.12), 2.5, '#fff');
-      break;
-    case 7:
-      { const g = ctx.createRadialGradient(W * 0.5, H * 0.45, 0, W * 0.5, H * 0.45, W * 0.6); g.addColorStop(0, '#5a4a6e'); g.addColorStop(0.6, '#36283f'); g.addColorStop(1, '#1c1426'); ctx.fillStyle = g; fill(); }
-      { const v = ctx.createRadialGradient(W * 0.5, H * 0.5, W * 0.3, W * 0.5, H * 0.5, W * 0.72); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.65)'); ctx.fillStyle = v; fill(); }
-      [['#e196ff', 0.22, 0.4], ['#b4c8ff', 0.7, 0.3], ['#ffaae6', 0.55, 0.62], ['#c8a0ff', 0.85, 0.55]].forEach(p => { ctx.fillStyle = p[0]; ctx.beginPath(); ctx.ellipse(W * p[1], H * p[2], 4, 9, 0, 0, Math.PI * 2); ctx.fill(); });
-      break;
-    case 8:
-      ctx.fillStyle = lin([[0, '#3a4756'], [0.55, '#2a2540'], [1, '#171426']]); fill();
-      ell(W * 0.4, H * 0.5, W * 0.5, H * 0.12, 'rgba(200,200,230,0.16)');
-      ell(W * 0.65, H * 0.62, W * 0.45, H * 0.1, 'rgba(212,212,236,0.13)');
-      break;
-    case 9:
-      ctx.fillStyle = lin([[0, '#5b2a6e'], [0.35, '#b23a6a'], [0.65, '#f4663c'], [1, '#ffc14d']]); fill();
-      { const g = ctx.createRadialGradient(W * 0.5, H * 0.8, 0, W * 0.5, H * 0.8, W * 0.4); g.addColorStop(0, 'rgba(255,220,120,0.7)'); g.addColorStop(1, 'rgba(255,220,120,0)'); ctx.fillStyle = g; fill(); }
-      ctx.fillStyle = 'rgba(38,12,28,0.6)';
-      { const tx = W * 0.3, tw = W * 0.4, topY = H * 0.3; ctx.fillRect(tx - 6, topY, tw + 12, 12); ctx.fillRect(tx, topY + 22, tw, 9); ctx.fillRect(tx + tw * 0.12, topY, 12, H * 0.5); ctx.fillRect(tx + tw * 0.78, topY, 12, H * 0.5); }
-      break;
-    case 10:
-      ctx.fillStyle = '#000'; fill();
-      { const g = ctx.createRadialGradient(W * 0.5, H * 0.44, 0, W * 0.5, H * 0.44, W * 0.55); g.addColorStop(0, 'rgba(120,80,220,0.5)'); g.addColorStop(0.5, 'rgba(40,20,90,0.3)'); g.addColorStop(1, '#05020f'); ctx.fillStyle = g; fill(); }
-      for (let i = 0; i < 42; i++) dot((i * 97) % W, (i * 61) % H, (i % 4 ? 1 : 1.6), (i % 5) ? '#fff' : '#b3e5fc');
-      break;
-    default:
-      ctx.fillStyle = '#888'; fill();
+/* Vẽ ảnh nền (cover) lên canvas; thiếu ảnh -> gradient dự phòng */
+function drawImageCover(ctx, img, dx, dy, dw, dh) {
+  const ir = img.naturalWidth / img.naturalHeight, dr = dw / dh;
+  let sw, sh, sx, sy;
+  if (ir > dr) { sh = img.naturalHeight; sw = sh * dr; sx = (img.naturalWidth - sw) / 2; sy = 0; }
+  else { sw = img.naturalWidth; sh = sw / dr; sx = 0; sy = (img.naturalHeight - sh) / 2; }
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+}
+function drawStudioBackground(ctx, bg, W, H) {
+  const img = bg && bgImgCache[bg.id];
+  if (img && img.complete && img.naturalWidth > 0) {
+    try { drawImageCover(ctx, img, 0, 0, W, H); return; } catch (e) { /* tainted/lỗi -> fallback */ }
   }
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, (bg && bg.c1) || "#cfe0ea");
+  g.addColorStop(1, (bg && bg.c2) || "#8499a8");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 }
 
 /* ---- Màn Album ---- */
