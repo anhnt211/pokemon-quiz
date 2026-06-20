@@ -345,53 +345,56 @@ body {
 .dex-cell.locked .dex-name { color:#999; }
 
 /* =====================================================================
-   MÀN MAIN — ảnh nền nhân vật + cụm menu KÍNH MỜ đẩy xuống vùng cỏ
+   MÀN MAIN — ảnh nền nhân vật trọn vẹn:
+   Trainer Card tối giản SÁT ĐỈNH + lưới 2x2 kính mờ SÁT ĐÁY, giữa trống.
    ===================================================================== */
 #home-screen .home-inner {
   /* Đường dẫn TƯƠNG ĐỐI (từ css/style.css) -> chạy đúng trên GitHub Pages, KHÔNG '/' đầu */
   background-image: url('../img/main-bg.jpg');
   background-size: cover;
-  background-position: center top;   /* giữ phần đỉnh có nhân vật + Pokéball */
+  background-position: center top;
   background-repeat: no-repeat;
-  padding: 14px 12px;
-}
-#home-screen .home-logo { text-align:center; margin-bottom:4px; }
-#home-screen .home-logo h1 {
-  font-size:1.3rem; color:#fff; letter-spacing:1px;
-  text-shadow:0 2px 6px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5);
+  padding: 12px 12px;
+  justify-content:flex-start;   /* trainer sát đỉnh; lưới tự đẩy xuống đáy */
 }
 
-/* Cụm menu hẹp, nằm giữa, sát ĐÁY -> nửa trên lộ nhân vật, hai rìa lộ phong cảnh */
+/* Trainer Card TỐI GIẢN, kính mờ navy, sát mép trên (vùng trời) */
+#home-screen .trainer-card {
+  width:92%; max-width:420px; margin:0 auto; flex-shrink:0; padding:8px 14px;
+  background: rgba(42,67,101,0.4);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18); color:#fff;
+}
+#home-screen .trainer-top { gap:10px; }
+.trainer-mini { display:flex; align-items:center; gap:12px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
+.trainer-mini .tm { display:inline-flex; align-items:center; gap:3px; }
+#home-screen .progress-wrap { margin-top:6px; }
+#home-screen .trainer-rank { font-size:0.98rem; }
+#home-screen .trainer-rank small { font-size:0.6rem; }
+
+/* Lưới 2x2 sát ĐÁY -> để lộ trọn nhân vật ở giữa & trên */
 .home-menu {
-  width:88%; max-width:400px; margin:0 auto; margin-top:auto;
-  display:flex; flex-direction:column; gap:10px; padding-bottom:30px;
+  width:90%; max-width:420px; margin:0 auto; margin-top:auto;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding-bottom:24px;
 }
-
-/* Nút KÍNH MỜ (glassmorphism) */
+/* Nút KÍNH MỜ — chỉ icon + tiêu đề, gọn vuông */
 .home-menu .menu-btn {
+  display:flex; align-items:center; justify-content:center; min-height:76px; padding:14px 10px;
   background: rgba(255,255,255,0.25);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.4);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  border-radius:16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15); border-radius:12px;
 }
-.home-menu .menu-btn:active { transform:scale(0.98); }
-.home-menu .menu-btn .btn-title { text-shadow:0 1px 2px rgba(255,255,255,0.55); }
-.home-menu .menu-btn small { color:#2d3748; opacity:0.78; font-weight:700; }
-/* Màu đặc trưng -> viền + chữ/icon (icon dùng currentColor) */
+.home-menu .menu-btn:active { transform:scale(0.97); }
+.home-menu .btn-row { flex-direction:column; gap:6px; }     /* icon trên, chữ dưới */
+.home-menu .btn-ico { width:28px; height:28px; }
+.home-menu .btn-title { font-size:1.05rem; font-weight:800; text-shadow:0 1px 2px rgba(255,255,255,0.55); }
+/* Màu đặc trưng -> viền + chữ/icon */
 .home-menu .quiz-launch   { color:#9f7aea; border-color:rgba(159,122,234,0.7); }
 .home-menu .get-launch    { color:#48bb78; border-color:rgba(72,187,120,0.7); }
 .home-menu .battle-launch { color:#f56565; border-color:rgba(245,101,101,0.7); }
 .home-menu .photo-launch  { color:#4299e1; border-color:rgba(66,153,225,0.7); }
-
-/* Trainer Card KÍNH MỜ navy */
-.home-menu .trainer-card {
-  background: rgba(42,67,101,0.42);
-  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.35);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-  color:#fff;
-}
 
 /* =====================================================================
    MÀN ポケモンGET — BẢN ĐỒ NỀN + MỐC ĐÁNH DẤU
