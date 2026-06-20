@@ -4,7 +4,7 @@
    - PokéAPI:  stale-while-revalidate (dùng cache, cập nhật nền)
    - Ảnh GitHub: cache-first (ảnh đã xem -> lưu lại để xem offline)
    ===================================================================== */
-const CACHE = "poke-quiz-v18";
+const CACHE = "poke-quiz-v19";
 
 const APP_SHELL = [
   "./",
@@ -18,7 +18,7 @@ const APP_SHELL = [
   "./js/api.js",
   "./js/effects.js",
   "./js/game.js",
-  "./js/quiz.js",
+  "./js/puzzle.js",
   "./js/battle.js",
   "./js/photo.js",
   "./js/main.js",

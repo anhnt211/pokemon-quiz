@@ -7,8 +7,12 @@
 getLaunch.addEventListener("click", goGetMap);   // main -> bản đồ ポケモンGET
 getBackBtn.addEventListener("click", goHome);    // bản đồ -> main
 backBtn.addEventListener("click", goGetMap);     // thoát 1 vùng -> về bản đồ
-quizBackBtn.addEventListener("click", goHome);   // quiz -> main
-quizLaunch.addEventListener("click", enterQuiz);
+// Pokémon Puzzle
+puzzleLaunch.addEventListener("click", enterPuzzle);
+puzzleBackBtn.addEventListener("click", goHome);
+puzzleShuffleBtn.addEventListener("click", newPuzzle);
+puzzleNextBtn.addEventListener("click", newPuzzle);
+puzzleHomeBtn.addEventListener("click", goHome);
 
 // Battle (nút もういちど / ホームへ được gán động trong setResultButtons)
 battleLaunch.addEventListener("click", enterBattle);

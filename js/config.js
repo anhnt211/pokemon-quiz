@@ -48,8 +48,8 @@ const MISSION_POOL = [
   { key:"catch5", icon:"⚡", label:"ポケモン を 5ひき つかまえよう！",        track:"catch", target:5 },
   { key:"catch3", icon:"🎯", label:"ポケモン を 3びき つかまえよう！",        track:"catch", target:3 },
   { key:"shiny1", icon:"✨", label:"シャイニーポケモン に 1かい であおう！",   track:"shiny", target:1 },
-  { key:"quiz5",  icon:"🧠", label:"クイズに 5かい せいかいしよう！",          track:"quizCorrect", target:5 },
-  { key:"quiz3",  icon:"📘", label:"クイズに 3かい せいかいしよう！",          track:"quizCorrect", target:3 },
+  { key:"puzzle2", icon:"🧩", label:"パズルを 2かい かんせいさせよう！",        track:"puzzle", target:2 },
+  { key:"puzzle1", icon:"🧩", label:"パズルを 1かい かんせいさせよう！",        track:"puzzle", target:1 },
   { key:"catch8", icon:"🔥", label:"ポケモン を 8ひき つかまえよう！",        track:"catch", target:8 }
 ];
 
@@ -66,13 +66,8 @@ let currentRegion = null;
 let currentCorrectAnswer = null;
 let currentIsShiny = false;
 
-// Quiz
-let quizPool = [];
-let quizPoolEnd = 0;        // quiz đã nạp tên tới ID nào
+// Cache chi tiết Pokémon (dùng bởi api.getPokemonDetail)
 let detailCache = {};
-let usedQuizPokemonIds = [];
-let quizIndex = 0;
-let quizCorrectCount = 0;
 
 /* Tiện ích chung: xáo trộn Fisher–Yates */
 function shuffle(array) {

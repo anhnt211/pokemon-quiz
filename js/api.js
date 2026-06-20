@@ -38,3 +38,17 @@ async function getPokemonDetail(id) {
   detailCache[id] = detail;
   return detail;
 }
+
+/* ===== Loài (species) + tên tiếng Nhật — DÙNG CHUNG cho battle/photo/puzzle ===== */
+let speciesCache = {};
+async function getSpecies(id) {
+  if (speciesCache[id]) return speciesCache[id];
+  const res = await fetch(`${API_BASE}/pokemon-species/${id}`);
+  if (!res.ok) throw new Error("species " + id);
+  return (speciesCache[id] = await res.json());
+}
+async function getJapaneseName(id) {
+  const sp = await getSpecies(id);
+  const ja = sp.names.find(n => n.language.name === "ja-Hrkt") || sp.names.find(n => n.language.name === "ja");
+  return ja ? ja.name : ("No." + pad(id));
+}

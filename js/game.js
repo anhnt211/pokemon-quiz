@@ -100,7 +100,7 @@ function showScreen(name) {
   homeScreen.style.display   = name === "home"   ? "block" : "none";
   getmapScreen.style.display = name === "getmap" ? "block" : "none";
   gameScreen.style.display   = name === "game"   ? "block" : "none";
-  quizScreen.style.display   = name === "quiz"   ? "block" : "none";
+  puzzleScreen.style.display = name === "puzzle" ? "block" : "none";
   battleScreen.style.display = name === "battle" ? "block" : "none";
   photoScreen.style.display  = name === "photo"  ? "block" : "none";
 }

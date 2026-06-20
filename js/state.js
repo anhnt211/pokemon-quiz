@@ -178,8 +178,7 @@ function getTrainerRank(total) {
 }
 function updateCandyDisplays() {
   const c = gameState.candy || 0;
-  homeCandy.textContent = c;
-  quizCandy.textContent = c;
+  if (homeCandy) homeCandy.textContent = c;
 }
 function renderTrainerCard() {
   const total = gameState.pokedex.length + gameState.shinyPokedex.length;

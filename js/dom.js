@@ -7,7 +7,7 @@
 const homeScreen = document.getElementById("home-screen");
 const getmapScreen = document.getElementById("getmap-screen");
 const gameScreen = document.getElementById("game-screen");
-const quizScreen = document.getElementById("quiz-screen");
+const puzzleScreen = document.getElementById("puzzle-screen");
 
 // Nút điều hướng
 const getLaunch = document.getElementById("get-launch");
@@ -76,15 +76,17 @@ const dexRegionName = document.getElementById("dex-region-name");
 const dexOpenBtn  = document.getElementById("dex-open-btn");
 const dexCloseBtn = document.getElementById("dex-close-btn");
 
-// Quiz
-const quizLaunch  = document.getElementById("quiz-launch");
-const quizBackBtn = document.getElementById("quiz-back-btn");
-const quizQuestionEl = document.getElementById("quiz-question");
-const quizStatusEl   = document.getElementById("quiz-status");
-const quizProgressEl = document.getElementById("quiz-progress");
-const quizRangeEl    = document.getElementById("quiz-range");
-const quizCandy   = document.getElementById("quiz-candy");
-const quizOptionButtons = document.querySelectorAll("#quiz-options .btn-option");
+// Pokémon Puzzle
+const puzzleLaunch   = document.getElementById("puzzle-launch");
+const puzzleBackBtn  = document.getElementById("puzzle-back-btn");
+const puzzleStatus   = document.getElementById("puzzle-status");
+const puzzleRef      = document.getElementById("puzzle-ref");
+const puzzleGrid     = document.getElementById("puzzle-grid");
+const puzzleShuffleBtn = document.getElementById("puzzle-shuffle");
+const puzzleResult   = document.getElementById("puzzle-result");
+const puzzleResultText = document.getElementById("puzzle-result-text");
+const puzzleNextBtn  = document.getElementById("puzzle-next");
+const puzzleHomeBtn  = document.getElementById("puzzle-home");
 
 // Photo Studio
 const photoScreen     = document.getElementById("photo-screen");

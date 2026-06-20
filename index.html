@@ -40,10 +40,10 @@
 
       <!-- Lưới 2x2 nút kính mờ, sát đáy (vùng cỏ) -->
       <div class="home-menu">
-        <button class="menu-btn quiz-launch" id="quiz-launch">
+        <button class="menu-btn puzzle-launch" id="puzzle-launch">
           <span class="btn-row">
-            <svg class="btn-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l1.9 5.1 5.1 1.9-5.1 1.9L12 16.5l-1.9-5.1L5 9.5l5.1-1.9L12 2.5z"/><circle cx="18.7" cy="17.6" r="1.5"/><circle cx="6" cy="16.6" r="1.1"/></svg>
-            <span class="btn-title">スーパークイズ</span>
+            <svg class="btn-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3a2 2 0 0 1 4 0c0 .6.5 1 1 1h3a1 1 0 0 1 1 1v3c0 .5.4 1 1 1a2 2 0 0 1 0 4c-.6 0-1 .5-1 1v3a1 1 0 0 1-1 1h-3c-.5 0-1 .4-1 1a2 2 0 0 1-4 0c0-.6-.5-1-1-1H4a1 1 0 0 1-1-1v-3c0-.5-.4-1-1-1a2 2 0 0 1 0-4c.6 0 1-.5 1-1V5a1 1 0 0 1 1-1h3c.5 0 1-.4 1-1z"/></svg>
+            <span class="btn-title">ポケモン パズル</span>
           </span>
         </button>
         <button class="menu-btn get-launch" id="get-launch">
@@ -207,26 +207,34 @@
     </main>
   </div>
 
-  <!-- ============ QUIZ ============ -->
-  <div class="screen" id="quiz-screen" style="display:none;">
-    <main class="game-card">
-      <header class="status-bar">
-        <div class="left-group"><button class="back-btn" id="quiz-back-btn">← もどる</button></div>
-        <div class="right-group">
-          <div class="progress-pill" id="quiz-progress">だい 1 / 5 もん</div>
-          <div class="candy-pill">🍬 <span id="quiz-candy">0</span></div>
-        </div>
-      </header>
-      <div class="title-area"><span class="region-badge" id="quiz-range">クイズ</span></div>
-      <div id="quiz-question">...</div>
-      <p id="quiz-status"></p>
-      <div class="options-grid" id="quiz-options">
-        <button class="btn-option">？</button>
-        <button class="btn-option">？</button>
-        <button class="btn-option">？</button>
-        <button class="btn-option">？</button>
+  <!-- ============ ポケモン パズル ============ -->
+  <div class="screen" id="puzzle-screen" style="display:none;">
+    <div class="home-inner">
+      <div class="get-header">
+        <button class="back-btn-dark" id="puzzle-back-btn">← もどる</button>
+        <h2 class="get-title">🧩 ポケモン パズル</h2>
       </div>
-    </main>
+      <p class="section-label" id="puzzle-status">ピースを 2つ タップして いれかえてね！</p>
+      <div class="puzzle-wrap">
+        <div class="puzzle-ref-box">
+          <span class="puzzle-ref-label">おてほん</span>
+          <div class="puzzle-ref" id="puzzle-ref"></div>
+        </div>
+        <div class="puzzle-grid" id="puzzle-grid"></div>
+        <button class="back-btn-dark" id="puzzle-shuffle">↺ シャッフル</button>
+      </div>
+    </div>
+
+    <!-- Bảng chúc mừng -->
+    <div class="battle-result" id="puzzle-result">
+      <div class="result-box">
+        <div class="result-text" id="puzzle-result-text"></div>
+        <div class="result-actions">
+          <button class="menu-btn" id="puzzle-next">つぎの パズル 🔁</button>
+          <button class="menu-btn battle-home" id="puzzle-home">ホームへ 🏠</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Popups -->
@@ -261,7 +269,7 @@
   <script src="./js/api.js"></script>
   <script src="./js/effects.js"></script>
   <script src="./js/game.js"></script>
-  <script src="./js/quiz.js"></script>
+  <script src="./js/puzzle.js"></script>
   <script src="./js/battle.js"></script>
   <script src="./js/photo.js"></script>
   <script src="./js/main.js"></script>

@@ -78,6 +78,7 @@ body {
   width:100%; border:none; border-radius:16px; padding:14px 16px;
   display:flex; flex-direction:column; align-items:center; gap:3px;
   font-family:inherit; color:#fff; cursor:pointer;
+  background:#5664d6;   /* nền mặc định (nút không có biến thể vẫn hiện rõ) */
   box-shadow:0 4px 6px rgba(0,0,0,0.05); transition:all 0.2s ease;
 }
 .menu-btn:active { transform:scale(0.98); box-shadow:0 2px 4px rgba(0,0,0,0.08); }
@@ -87,7 +88,7 @@ body {
 .btn-title { font-size:1.05rem; font-weight:800; letter-spacing:0.3px; }
 .menu-btn small { display:block; font-size:0.66rem; font-weight:600; opacity:0.85; }
 /* Màu nút dịu mắt, đồng bộ */
-.quiz-launch   { background:#9f7aea; }
+.puzzle-launch { background:#9f7aea; }
 .get-launch    { background:#48bb78; }
 .battle-launch { background:#f56565; }
 .photo-launch  { background:#63b3ed; }
@@ -391,7 +392,7 @@ body {
 .home-menu .btn-ico { width:28px; height:28px; }
 .home-menu .btn-title { font-size:1.05rem; font-weight:800; text-shadow:0 1px 2px rgba(255,255,255,0.55); }
 /* Màu đặc trưng -> viền + chữ/icon */
-.home-menu .quiz-launch   { color:#9f7aea; border-color:rgba(159,122,234,0.7); }
+.home-menu .puzzle-launch { color:#9f7aea; border-color:rgba(159,122,234,0.7); }
 .home-menu .get-launch    { color:#48bb78; border-color:rgba(72,187,120,0.7); }
 .home-menu .battle-launch { color:#f56565; border-color:rgba(245,101,101,0.7); }
 .home-menu .photo-launch  { color:#4299e1; border-color:rgba(66,153,225,0.7); }
@@ -972,3 +973,38 @@ body {
   font-size:1.3rem; font-weight:900; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.5); z-index:2;
 }
 .lightbox-close:active { transform:scale(0.92); }
+
+/* =====================================================================
+   POKÉMON PUZZLE — màn xếp hình 4x4
+   ===================================================================== */
+.puzzle-wrap { display:flex; flex-direction:column; align-items:center; gap:12px; padding:2px 0; }
+.puzzle-ref-box { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.puzzle-ref-label { font-size:0.66rem; font-weight:800; color:var(--ink-soft); }
+.puzzle-ref {
+  width:74px; height:74px; border-radius:12px; border:2px solid var(--card-border);
+  box-shadow:0 2px 8px rgba(0,0,0,0.14);
+}
+.puzzle-grid {
+  width:100%; max-width:300px; aspect-ratio:1/1; min-height:260px;   /* fallback Safari cũ */
+  display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(4,1fr);
+  gap:3px; padding:4px; background:#cbd5e0; border-radius:14px; box-shadow:var(--shadow);
+}
+.puzzle-piece {
+  border:none; padding:0; margin:0; cursor:pointer; border-radius:5px; outline:none;
+  background-repeat:no-repeat, no-repeat; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  transition:transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.puzzle-piece.sel { transform:scale(0.9); box-shadow:0 0 0 3px #f6ad55; z-index:2; filter:brightness(1.08); }
+.puzzle-piece.correct { box-shadow:inset 0 0 0 2.5px rgba(72,187,120,0.95); }
+.puzzle-grid.solved { animation:puzzleWin 0.9s ease; }
+.puzzle-grid.solved .puzzle-piece { box-shadow:none; }
+@keyframes puzzleWin {
+  0%,100%{ filter:brightness(1); transform:scale(1); }
+  30%{ filter:brightness(1.7) saturate(1.3); transform:scale(1.04); }
+  60%{ filter:brightness(1.2); }
+}
+#puzzle-shuffle { margin-top:2px; }
+
+/* Dòng tên to + dòng phụ trong bảng kết quả (dùng chung battle-result) */
+.result-text .big { display:block; font-size:1.7rem; margin:6px 0 2px; color:var(--poke-blue-dark); }
+.result-text .result-sub { display:block; font-size:0.9rem; font-weight:800; color:#2f9e5e; margin-top:4px; }
