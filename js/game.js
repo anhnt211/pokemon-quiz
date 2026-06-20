@@ -233,14 +233,17 @@ function checkAnswer(selectedName, buttonElement) {
 
   elStatus.className = ""; elStatus.textContent = "ゲットだ〜！ 🎶";
 
-  // 🎬 Hoạt cảnh ném Pokéball: lắc 3 lần -> nổ -> hiện ảnh màu + tiếng kêu + đọc tên
+  // ĐỌC TÊN NGAY trong thao tác chạm (iOS Safari chỉ cho TTS chạy trong cử chỉ người dùng)
+  const caughtName = currentCorrectAnswer.name;
+  speakName(caughtName);
+
+  // 🎬 Hoạt cảnh ném Pokéball: lắc 3 lần -> nổ -> hiện ảnh màu + tiếng kêu
   const animToken = loadToken;
   playCatchAnimation(currentCorrectAnswer, currentIsShiny, () => {
     if (animToken !== loadToken) return;   // bé đã rời màn -> bỏ qua
     elStage.classList.add("celebrate");
     elImage.classList.add("revealed");
-    playCry(id);                              // tiếng kêu Pokémon khi hiện ra
-    speakName(currentCorrectAnswer.name);     // đọc tên (kênh riêng, song song cry)
+    playCry(id);                              // tiếng kêu Pokémon khi hiện ra (kênh riêng, ~55%)
     showCatchPopup(currentCorrectAnswer.name, currentIsShiny);
     elStatus.className = currentIsShiny ? "shiny-msg" : "";
     elStatus.textContent = currentIsShiny ? "✨ シャイニー ゲットだぜ！ ✨" : "ずかんに とうろく！ 📕";

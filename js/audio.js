@@ -55,7 +55,7 @@ function playCry(id, volume) {
   try {
     if (currentCry) { currentCry.pause(); currentCry = null; }
     const a = new Audio(`${CRY_BASE}/${id}.ogg`);
-    a.volume = (typeof volume === "number") ? volume : 0.65;
+    a.volume = (typeof volume === "number") ? volume : 0.55;   // ~55% — nhẹ hơn, không giật mình
     const p = a.play();
     if (p && typeof p.catch === "function") p.catch(() => {});   // chặn lỗi autoplay/định dạng
     currentCry = a;
