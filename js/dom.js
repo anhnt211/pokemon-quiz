@@ -5,11 +5,43 @@
 
 // Màn hình
 const homeScreen = document.getElementById("home-screen");
+const getmapScreen = document.getElementById("getmap-screen");
 const gameScreen = document.getElementById("game-screen");
 const quizScreen = document.getElementById("quiz-screen");
 
+// Nút điều hướng
+const getLaunch = document.getElementById("get-launch");
+const getBackBtn = document.getElementById("get-back-btn");
+const battleLaunch = document.getElementById("battle-launch");
+
+// Bản đồ ポケモンGET (markers trên nền bản đồ)
+const mapBoard = document.getElementById("map-board");
+
+// Sàn đấu Battle
+const battleScreen   = document.getElementById("battle-screen");
+const battleBackBtn  = document.getElementById("battle-back-btn");
+const battleChoose   = document.getElementById("battle-choose");
+const chooseGrid     = document.getElementById("choose-grid");
+const battleArena    = document.getElementById("battle-arena");
+const arenaEl        = document.getElementById("arena");
+const foeSide   = document.getElementById("foe-side");
+const foeName   = document.getElementById("foe-name");
+const foeImg    = document.getElementById("foe-img");
+const foeHp     = document.getElementById("foe-hp");
+const mySide    = document.getElementById("my-side");
+const myName    = document.getElementById("my-name");
+const myImg     = document.getElementById("my-img");
+const myHp      = document.getElementById("my-hp");
+const typeFlash = document.getElementById("type-flash");
+const battleLog = document.getElementById("battle-log");
+const battleStartBtn = document.getElementById("battle-start");
+const zmoveBtn       = document.getElementById("zmove-btn");
+const battleResult = document.getElementById("battle-result");
+const resultText   = document.getElementById("result-text");
+const battleAgainBtn = document.getElementById("battle-again");
+const battleHomeBtn  = document.getElementById("battle-home");
+
 // Home
-const adventureMap = document.getElementById("adventure-map");
 const missionList = document.getElementById("mission-list");
 const trainerRankEl = document.getElementById("trainer-rank");
 const homeCandy = document.getElementById("home-candy");
@@ -53,3 +85,18 @@ const quizProgressEl = document.getElementById("quiz-progress");
 const quizRangeEl    = document.getElementById("quiz-range");
 const quizCandy   = document.getElementById("quiz-candy");
 const quizOptionButtons = document.querySelectorAll("#quiz-options .btn-option");
+
+// Photo Studio
+const photoScreen     = document.getElementById("photo-screen");
+const photoLaunch     = document.getElementById("photo-launch");
+const photoBackBtn    = document.getElementById("photo-back-btn");
+const photoChoose     = document.getElementById("photo-choose");
+const photoChooseGrid = document.getElementById("photo-choose-grid");
+const photoStudio     = document.getElementById("photo-studio");
+const photoStage      = document.getElementById("photo-stage");
+const photoPoke       = document.getElementById("photo-poke");
+const photoCaption    = document.getElementById("photo-caption");
+const bgPicker        = document.getElementById("bg-picker");
+const camBtn          = document.getElementById("cam-btn");
+const photoChangeBtn  = document.getElementById("photo-change-btn");
+const photoHint       = document.getElementById("photo-hint");

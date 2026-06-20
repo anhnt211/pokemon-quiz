@@ -3,18 +3,36 @@
    GAME — Home, điều hướng màn, vòng chơi đoán bóng (+Shiny), Pokédex
    ===================================================================== */
 
-/* ===== HOME ===== */
+/* ===== MÀN MAIN (chỉ Trainer Card + 2 nút) ===== */
 function renderHome() {
-  ensureDailyMissions();
+  ensureDailyMissions();   // nhiệm vụ vẫn chạy ngầm (thưởng kẹo + popup Oak)
   renderTrainerCard();
-  renderMissions();
+  renderMissions();        // no-op vì đã bỏ khung nhiệm vụ khỏi main
+}
 
-  adventureMap.innerHTML = "";
+/* Toạ độ (% theo bản đồ nền) của 4 地方 — xếp theo hành trình chéo */
+const MAP_POS = [
+  { x: 24, y: 78 },   // kanto  (đồng cỏ, dưới-trái)
+  { x: 46, y: 56 },   // johto  (rừng, giữa)
+  { x: 70, y: 67 },   // hoenn  (biển + núi lửa, phải)
+  { x: 76, y: 26 }    // sinnoh (núi tuyết, trên)
+];
+
+/* ===== MÀN ポケモンGET — các 地方 đánh dấu bằng mốc trên nền bản đồ ===== */
+function renderGetMap() {
+  ensureDailyMissions();
   const newlyUnlocked = detectNewUnlocks();
 
-  // Vùng "hiện tại" = vùng mở khóa cao nhất (tiền tuyến thám hiểm)
   let currentKey = null;
   REGIONS.forEach(r => { if (isRegionUnlocked(r)) currentKey = r.key; });
+
+  // Đường mòn nét đứt nối các mốc (SVG overlay)
+  const pts = MAP_POS.map(p => `${p.x},${p.y}`).join(" ");
+  let html = `
+    <svg class="map-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="${pts}" fill="none" stroke="#fff" stroke-width="1.1"
+                stroke-dasharray="3 2.5" stroke-linecap="round" opacity="0.85"/>
+    </svg>`;
 
   REGIONS.forEach((r, idx) => {
     const unlocked = isRegionUnlocked(r);
@@ -23,55 +41,49 @@ function renderHome() {
     const pct = Math.round(caught / total * 100);
     const isCurrent = r.key === currentKey;
     const isNew = newlyUnlocked.some(n => n.key === r.key);
+    const bossAvail = isBossAvailable(r);
+    const bossDone = isBossDefeated(r);
+    const pos = MAP_POS[idx];
 
-    // Một hàng = cọc mốc (pin) trên đường mòn + ô địa hình
-    const row = document.createElement("div");
-    row.className = "map-row" + (unlocked ? "" : " locked") + (isCurrent ? " current" : "");
-    row.style.setProperty("--rc", r.color);
+    const cls = "map-marker" + (unlocked ? "" : " locked") + (isCurrent ? " current" : "") + (isNew ? " just-unlocked" : "");
 
-    const pin = document.createElement("div");
-    pin.className = "map-pin";
-    pin.innerHTML = `${isCurrent ? '<span class="pin-now">📍</span>' : ""}<span class="pin-dot">${unlocked ? (idx + 1) : "🔒"}</span>`;
+    let inner = isCurrent ? '<span class="mk-now">📍 いまここ</span>' : "";
 
-    const tile = document.createElement(unlocked ? "button" : "div");
-    tile.className = "map-tile " + r.key + (unlocked ? "" : " locked") + (isNew ? " just-unlocked" : "");
-
-    let bottomHTML;
     if (unlocked) {
-      bottomHTML = `
-        <div class="tile-bottom">
-          <div class="tile-prog-label">つかまえた数: ${caught} / ${total}</div>
-          <div class="tile-prog-bar"><div class="tile-prog-fill" style="width:${pct}%"></div></div>
-        </div>`;
+      inner += `
+        <button class="mk-tap" type="button">
+          <span class="mk-pin">${r.emoji}</span>
+          <span class="mk-name">${r.name}</span>
+          <span class="mk-prog">${caught}/${total}${bossDone ? " 👑✓" : ""}</span>
+          <span class="mk-bar"><span class="mk-fill" style="width:${pct}%"></span></span>
+        </button>`;
+      if (bossAvail) inner += `<button class="mk-boss" type="button" title="ボスバトル">👑</button>`;
     } else {
       const req = REGIONS.find(x => x.key === r.requires.region);
-      const have = countCaughtInRegion(req);
-      bottomHTML = `
-        <div class="tile-locked-info">
-          <span class="lock-ico">🔒</span>
-          <span class="lock-text">${req.short}で ${r.requires.count}ひき つかまえると ほかのちほうが ひらくぞ！（いま ${have}/${r.requires.count}）</span>
+      inner += `
+        <div class="mk-tap">
+          <span class="mk-pin">🔒</span>
+          <span class="mk-name">${r.name}</span>
+          <span class="mk-prog">${req.short}の ボスを たおすと ひらく</span>
         </div>`;
     }
 
-    tile.innerHTML = `
-      <div class="tile-scene scene-${r.key}"></div>
-      <div class="tile-overlay">
-        <div class="tile-top">
-          <span class="tile-emoji">${unlocked ? r.emoji : "🔒"}</span>
-          <span class="tile-name">${r.name}</span>
-          ${unlocked ? '<span class="tile-go">▶</span>' : ""}
-        </div>
-        ${bottomHTML}
-      </div>`;
-
-    if (unlocked) tile.addEventListener("click", () => enterRegion(r));
-
-    row.appendChild(pin);
-    row.appendChild(tile);
-    adventureMap.appendChild(row);
+    html += `<div class="${cls}" data-key="${r.key}" style="--rc:${r.color}; left:${pos.x}%; top:${pos.y}%;">${inner}</div>`;
   });
 
-  // 🎉 Ăn mừng nếu vừa mở khóa vùng mới
+  mapBoard.innerHTML = html;
+
+  // Gắn sự kiện: vùng đã mở -> chạm vào chơi; nút 👑 -> đấu Boss
+  REGIONS.forEach(r => {
+    if (!isRegionUnlocked(r)) return;
+    const marker = mapBoard.querySelector(`.map-marker[data-key="${r.key}"]`);
+    if (!marker) return;
+    const tap = marker.querySelector(".mk-tap");
+    if (tap) tap.addEventListener("click", () => enterRegion(r));
+    const boss = marker.querySelector(".mk-boss");
+    if (boss) boss.addEventListener("click", (e) => { e.stopPropagation(); enterBossBattle(r); });
+  });
+
   if (newlyUnlocked.length) showUnlockPopup(newlyUnlocked[0]);
 }
 
@@ -85,20 +97,37 @@ function showUnlockPopup(region) {
 }
 
 function showScreen(name) {
-  homeScreen.style.display = name === "home" ? "block" : "none";
-  gameScreen.style.display = name === "game" ? "block" : "none";
-  quizScreen.style.display = name === "quiz" ? "block" : "none";
+  homeScreen.style.display   = name === "home"   ? "block" : "none";
+  getmapScreen.style.display = name === "getmap" ? "block" : "none";
+  gameScreen.style.display   = name === "game"   ? "block" : "none";
+  quizScreen.style.display   = name === "quiz"   ? "block" : "none";
+  battleScreen.style.display = name === "battle" ? "block" : "none";
+  photoScreen.style.display  = name === "photo"  ? "block" : "none";
 }
 
-function goHome() {
+/* Dọn dẹp khi rời màn chơi/quiz */
+function leaveActive() {
   loadToken++;
   clearTimeout(questionTimer);
   if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   closePokedex();
   hideCatchPopup();
+}
+
+/* Về màn MAIN */
+function goHome() {
+  leaveActive();
   currentRegion = null;
   renderHome();
   showScreen("home");
+}
+
+/* Về màn ポケモンGET (bản đồ) — cũng dùng khi thoát khỏi 1 vùng */
+function goGetMap() {
+  leaveActive();
+  currentRegion = null;
+  renderGetMap();
+  showScreen("getmap");
 }
 
 /* ===== VÀO VÙNG & CHƠI ===== */
@@ -190,37 +219,33 @@ function checkAnswer(selectedName, buttonElement) {
   const isNewCatch = !gameState.pokedex.includes(id);
   const isNewShiny = currentIsShiny && !gameState.shinyPokedex.includes(id);
 
-  elImage.classList.remove("silhouette");
-  elImage.classList.add("revealed");
-  speakName(currentCorrectAnswer.name);
   buttonElement.classList.add("correct");
   optionButtons.forEach(btn => (btn.disabled = true));
+  clearTimeout(questionTimer);
 
   gameState.score += currentIsShiny ? 30 : 10;
   elScore.textContent = gameState.score;
   if (isNewCatch) gameState.pokedex.push(id);
   if (isNewShiny) gameState.shinyPokedex.push(id);
   saveGame();
-
   progressMission("catch", 1);
   if (currentIsShiny) progressMission("shiny", 1);
 
-  if (currentIsShiny) {
+  elStatus.className = ""; elStatus.textContent = "ゲットだ〜！ 🎶";
+
+  // 🎬 Hoạt cảnh ném Pokéball: lắc 3 lần -> nổ -> hiện ảnh màu + tiếng kêu + đọc tên
+  const animToken = loadToken;
+  playCatchAnimation(currentCorrectAnswer, currentIsShiny, () => {
+    if (animToken !== loadToken) return;   // bé đã rời màn -> bỏ qua
     elStage.classList.add("celebrate");
-    launchSparkles();
-    showCatchPopup(currentCorrectAnswer.name, true);
-    elStatus.className = "shiny-msg"; elStatus.textContent = "✨ シャイニー ゲットだぜ！ ✨";
-    questionTimer = setTimeout(() => { hideCatchPopup(); nextQuestion(); }, 3000);
-  } else if (isNewCatch) {
-    elStage.classList.add("celebrate");
-    launchSparkles();
-    showCatchPopup(currentCorrectAnswer.name, false);
-    elStatus.className = ""; elStatus.textContent = "ずかんに とうろく！ 📕";
-    questionTimer = setTimeout(() => { hideCatchPopup(); nextQuestion(); }, 2800);
-  } else {
-    elStatus.className = ""; elStatus.textContent = `せいかい！ ${currentCorrectAnswer.name}！`;
-    questionTimer = setTimeout(nextQuestion, 1800);
-  }
+    elImage.classList.add("revealed");
+    playCry(id);                              // tiếng kêu Pokémon khi hiện ra
+    speakName(currentCorrectAnswer.name);     // đọc tên (kênh riêng, song song cry)
+    showCatchPopup(currentCorrectAnswer.name, currentIsShiny);
+    elStatus.className = currentIsShiny ? "shiny-msg" : "";
+    elStatus.textContent = currentIsShiny ? "✨ シャイニー ゲットだぜ！ ✨" : "ずかんに とうろく！ 📕";
+    questionTimer = setTimeout(() => { hideCatchPopup(); nextQuestion(); }, currentIsShiny ? 1800 : 1500);
+  });
 }
 
 /* ===== POKÉDEX (theo vùng đang chơi, đánh dấu Shiny) ===== */

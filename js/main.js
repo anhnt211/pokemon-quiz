@@ -4,9 +4,23 @@
    ===================================================================== */
 
 /* ===== Sự kiện ===== */
-backBtn.addEventListener("click", goHome);
-quizBackBtn.addEventListener("click", goHome);
+getLaunch.addEventListener("click", goGetMap);   // main -> bản đồ ポケモンGET
+getBackBtn.addEventListener("click", goHome);    // bản đồ -> main
+backBtn.addEventListener("click", goGetMap);     // thoát 1 vùng -> về bản đồ
+quizBackBtn.addEventListener("click", goHome);   // quiz -> main
 quizLaunch.addEventListener("click", enterQuiz);
+
+// Battle (nút もういちど / ホームへ được gán động trong setResultButtons)
+battleLaunch.addEventListener("click", enterBattle);
+battleStartBtn.addEventListener("click", startBattle);
+zmoveBtn.addEventListener("click", activateZMove);
+battleBackBtn.addEventListener("click", () => { stopBattle(); goHome(); });
+
+// Photo Studio
+photoLaunch.addEventListener("click", enterPhoto);
+photoBackBtn.addEventListener("click", goHome);
+camBtn.addEventListener("click", capturePhoto);
+photoChangeBtn.addEventListener("click", backToPhotoChooser);
 dexOpenBtn.addEventListener("click", () => { dexOverlay.classList.contains("open") ? closePokedex() : openPokedex(); });
 dexCloseBtn.addEventListener("click", closePokedex);
 dexOverlay.addEventListener("click", (e) => { if (e.target === dexOverlay) closePokedex(); });

@@ -14,7 +14,13 @@ body {
   font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Segoe UI",system-ui,sans-serif;
   background:linear-gradient(160deg,var(--poke-blue) 0%,var(--poke-blue-dark) 100%);
   min-height:100vh; min-height:100dvh;
-  padding:16px; color:var(--text-dark);
+  color:var(--text-dark);
+  /* Padding cơ bản 16px + cộng thêm vùng an toàn (notch/home indicator iPad/iPhone) */
+  padding:16px;
+  padding-top:calc(16px + env(safe-area-inset-top, 0px));
+  padding-bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  padding-left:calc(16px + env(safe-area-inset-left, 0px));
+  padding-right:calc(16px + env(safe-area-inset-right, 0px));
 }
 /* Căn giữa NGANG bằng margin auto; chiều dọc trang tự cuộn, không bao giờ cắt nội dung. */
 .screen { width:100%; max-width:500px; margin:0 auto; }
@@ -58,14 +64,34 @@ body {
 .mission-item.done .mission-label { color:#999; text-decoration:line-through; }
 .mission-check { font-size:1.3rem; }
 
-/* Quiz launch + region cards */
-.quiz-launch {
-  width:100%; background:linear-gradient(135deg,#9c27b0,#673ab7); color:#fff;
-  border:none; border-radius:18px; padding:16px; font-size:1.15rem; font-weight:900;
-  cursor:pointer; box-shadow:0 5px 0 #4a148c; font-family:inherit; letter-spacing:0.5px;
+/* Nút menu chính (chung) + biến thể màu */
+.menu-btn {
+  width:100%; border:none; border-radius:18px; padding:16px; font-size:1.15rem; font-weight:900;
+  cursor:pointer; font-family:inherit; letter-spacing:0.5px; color:#fff; text-align:center;
+  background:linear-gradient(135deg,#5664d6,#3b4cca); box-shadow:0 5px 0 var(--poke-blue-dark);
+  transition:transform 0.1s ease, box-shadow 0.1s ease;
 }
-.quiz-launch:active { transform:translateY(3px); box-shadow:0 2px 0 #4a148c; }
-.quiz-launch small { display:block; font-size:0.72rem; font-weight:700; opacity:0.9; margin-top:3px; }
+.menu-btn small { display:block; font-size:0.72rem; font-weight:700; opacity:0.92; margin-top:3px; }
+.menu-btn:active { transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,0.3); }
+.menu-btn:disabled { opacity:0.6; cursor:default; }
+.quiz-launch   { background:linear-gradient(135deg,#9c27b0,#673ab7); box-shadow:0 5px 0 #4a148c; }
+.quiz-launch:active   { box-shadow:0 2px 0 #4a148c; }
+.get-launch    { background:linear-gradient(135deg,#43a047,#2e7d32); box-shadow:0 5px 0 #1b5e20; }
+.get-launch:active    { box-shadow:0 2px 0 #1b5e20; }
+.battle-launch { background:linear-gradient(135deg,#ff7043,#e53935); box-shadow:0 5px 0 #b71c1c; }
+.battle-launch:active { box-shadow:0 2px 0 #b71c1c; }
+.battle-start  { background:linear-gradient(135deg,#ffca28,#ff8f00); color:#4e342e; box-shadow:0 5px 0 #c66900; margin-top:10px; }
+.battle-start:active  { box-shadow:0 2px 0 #c66900; }
+
+/* Header màn hình ポケモンGET */
+.get-header { display:flex; align-items:center; gap:12px; margin-bottom:2px; }
+.back-btn-dark {
+  appearance:none; border:none; background:var(--poke-blue); color:#fff; font-weight:800;
+  font-size:0.82rem; padding:8px 14px; border-radius:999px; cursor:pointer;
+  box-shadow:0 3px 0 var(--poke-blue-dark); white-space:nowrap; font-family:inherit;
+}
+.back-btn-dark:active { transform:translateY(2px); box-shadow:0 1px 0 var(--poke-blue-dark); }
+.get-title { font-size:1.3rem; font-weight:900; color:var(--poke-blue-dark); }
 
 .section-label { font-size:0.85rem; font-weight:900; color:var(--poke-blue-dark); margin-top:2px; }
 
@@ -193,11 +219,12 @@ body {
 .image-stage {
   position:relative; margin:8px 20px 4px; padding:20px;
   background:radial-gradient(circle at center,#eef3ff 0%,#dfe6ff 100%);
-  border-radius:20px; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; overflow:visible;
+  border-radius:20px; aspect-ratio:1/1; min-height:260px;   /* fallback nếu Safari cũ không hỗ trợ aspect-ratio */
+  display:flex; align-items:center; justify-content:center; overflow:visible;
   transition:box-shadow 0.3s ease;
 }
 #pokemon-image {
-  width:100%; height:100%; max-width:280px; object-fit:contain;
+  width:100%; height:100%; min-height:220px; max-width:280px; object-fit:contain;
   transition:filter 0.6s ease, transform 0.4s ease; will-change:filter; position:relative; z-index:2;
 }
 .silhouette { filter:brightness(0); }
@@ -296,8 +323,413 @@ body {
 .dex-cell.shiny { background:linear-gradient(135deg,#fff7d6,#fff0a8); border-color:#ffae00; box-shadow:0 0 10px rgba(255,174,0,0.6); }
 .dex-cell .shiny-star { position:absolute; top:3px; right:5px; font-size:0.95rem; animation:twinkle 1s ease-in-out infinite alternate; }
 @keyframes twinkle { from{transform:scale(0.85);opacity:0.7;} to{transform:scale(1.15);opacity:1;} }
-.dex-cell img, .dex-cell .placeholder { width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:8px; display:block; }
+.dex-cell img, .dex-cell .placeholder { width:100%; aspect-ratio:1/1; min-height:72px; object-fit:contain; border-radius:8px; display:block; }
 .dex-cell .placeholder { background:#15172e; display:flex; align-items:center; justify-content:center; color:#4a4f7a; font-size:1.7rem; font-weight:900; }
 .dex-cell .dex-id { font-size:0.7rem; font-weight:700; color:var(--poke-blue-dark); margin-top:3px; }
 .dex-cell .dex-name { font-size:0.72rem; font-weight:700; color:var(--text-dark); margin-top:1px; min-height:1em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .dex-cell.locked .dex-name { color:#999; }
+
+/* =====================================================================
+   ẢNH NỀN MÀN MAIN
+   ===================================================================== */
+#home-screen .home-inner {
+  background-image:
+    linear-gradient(180deg, rgba(59,76,202,0.12) 0%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0.95) 70%),
+    url("../img/main-bg.jpg");
+  background-size: cover; background-position: top center; background-repeat: no-repeat;
+}
+#home-screen .home-logo h1 { text-shadow: 2px 2px 0 var(--poke-yellow), 0 2px 8px rgba(0,0,0,0.25); }
+
+/* =====================================================================
+   MÀN ポケモンGET — BẢN ĐỒ NỀN + MỐC ĐÁNH DẤU
+   ===================================================================== */
+.map-board {
+  position:relative; width:100%; aspect-ratio:3/4; min-height:62vh;   /* fallback Safari cũ */
+  border-radius:18px; overflow:hidden;
+  background:url("../img/map-bg.jpg") center/cover no-repeat;
+  border:3px solid var(--poke-yellow); box-shadow:inset 0 0 22px rgba(0,0,0,0.28);
+}
+.map-path { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+
+.map-marker { position:absolute; transform:translate(-50%,-50%); z-index:2; }
+.mk-tap {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:none; border:none; padding:0; cursor:pointer; font-family:inherit; width:max-content;
+}
+.map-marker.locked .mk-tap { cursor:default; }
+.mk-pin {
+  width:48px; height:48px; border-radius:50%; background:#fff; border:4px solid var(--rc);
+  display:flex; align-items:center; justify-content:center; font-size:1.55rem;
+  box-shadow:0 3px 9px rgba(0,0,0,0.45); transition:transform 0.12s ease;
+}
+.mk-tap:active .mk-pin { transform:scale(0.9); }
+
+/* Nút Boss 👑 trên mốc */
+.mk-boss {
+  position:absolute; top:-14px; right:-16px; z-index:4;
+  width:32px; height:32px; border-radius:50%; border:2px solid #c66900;
+  background:radial-gradient(circle at 40% 35%, #fff7c4, #ffca28); font-size:1.05rem;
+  cursor:pointer; box-shadow:0 0 12px rgba(255,200,0,0.95); animation:bossPulse 1s infinite;
+}
+.mk-boss:active { transform:scale(0.9); }
+@keyframes bossPulse {
+  0%,100% { transform:scale(1);    box-shadow:0 0 8px rgba(255,200,0,0.8); }
+  50%     { transform:scale(1.2);  box-shadow:0 0 18px rgba(255,200,0,1); }
+}
+.mk-name { font-size:0.74rem; font-weight:900; color:#fff; text-shadow:0 1px 3px #000, 0 0 4px #000; white-space:nowrap; }
+.mk-prog { font-size:0.64rem; font-weight:800; color:#fff; background:rgba(0,0,0,0.45); padding:1px 8px; border-radius:999px; white-space:nowrap; }
+.mk-bar { width:48px; height:6px; background:rgba(255,255,255,0.45); border-radius:999px; overflow:hidden; }
+.mk-fill { display:block; height:100%; background:linear-gradient(90deg,#ffe680,var(--poke-yellow)); }
+.mk-now {
+  position:absolute; top:-19px; left:50%; transform:translateX(-50%);
+  font-size:0.6rem; font-weight:900; background:var(--poke-red); color:#fff;
+  padding:1px 7px; border-radius:999px; white-space:nowrap; animation:pinBounce 1s infinite;
+}
+.map-marker.locked { cursor:default; }
+.map-marker.locked .mk-pin { background:#cfd4dd; border-color:#7a8290; filter:grayscale(0.4) brightness(0.85); }
+.map-marker.current .mk-pin { animation:pinPulse 1.2s infinite; }
+.map-marker.just-unlocked .mk-pin { animation:tilePop 0.6s ease, pinPulse 1.2s infinite; }
+
+/* =====================================================================
+   ポケモンバトル — SÀN ĐẤU
+   ===================================================================== */
+/* Bước chọn quân */
+.choose-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(82px,1fr)); gap:10px;
+  max-height:62vh; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px;
+}
+.choose-cell {
+  position:relative; background:#fffbe6; border:2px solid var(--poke-yellow); border-radius:14px;
+  padding:6px; cursor:pointer; font-family:inherit; transition:transform 0.1s ease;
+}
+.choose-cell:active { transform:translateY(2px); }
+.choose-cell.shiny { border-color:#ffae00; box-shadow:0 0 8px rgba(255,174,0,0.6); }
+.choose-cell img { width:100%; aspect-ratio:1/1; min-height:64px; object-fit:contain; display:block; }
+.choose-cell .cc-id { font-size:0.66rem; font-weight:800; color:var(--poke-blue-dark); text-align:center; }
+.cc-star { position:absolute; top:2px; right:5px; font-size:0.9rem; }
+.choose-empty { text-align:center; color:#777; font-weight:700; padding:34px 12px; line-height:1.8; }
+
+/* Sàn đấu */
+.arena {
+  position:relative; border-radius:18px; border:3px solid var(--poke-yellow);
+  background:linear-gradient(180deg,#bfe3ff 0%,#dff1ff 45%,#d6f0d8 100%);
+  padding:14px; min-height:300px; display:flex; flex-direction:column; justify-content:space-between; gap:8px; overflow:hidden;
+}
+.fighter { display:flex; align-items:center; gap:10px; }
+.fighter.foe  { align-self:flex-end; }
+.fighter.mine { align-self:flex-start; }
+.fighter-img-wrap { width:108px; height:108px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.fighter-img { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 4px 6px rgba(0,0,0,0.3)); transition:opacity 0.6s ease, transform 0.3s ease; }
+.fighter-info { min-width:128px; background:rgba(255,255,255,0.88); border-radius:12px; padding:6px 10px; box-shadow:0 2px 5px rgba(0,0,0,0.12); }
+.fighter-name { font-size:0.92rem; font-weight:900; color:var(--poke-blue-dark); }
+.hp-wrap { margin-top:5px; }
+.hp-bar { height:11px; background:#d7dbe3; border:1px solid #b9c0cc; border-radius:999px; overflow:hidden; }
+.hp-fill { height:100%; width:100%; background:#4caf50; border-radius:999px; transition:width 0.5s ease, background 0.3s ease; }
+.hp-fill.mid { background:#ffb300; }
+.hp-fill.low { background:#e53935; }
+
+/* Animation tấn công / trúng đòn / ngất */
+.fighter.attack-up .fighter-img   { animation:atkUp 0.42s ease; }
+.fighter.attack-down .fighter-img { animation:atkDown 0.42s ease; }
+@keyframes atkUp   { 50%{ transform:translateY(-26px) scale(1.06); } }
+@keyframes atkDown { 50%{ transform:translateY(26px) scale(1.06); } }
+.fighter.hit .fighter-img { animation:hitShake 0.46s ease; }
+@keyframes hitShake {
+  0%,100%{ transform:translateX(0); filter:none; }
+  20%{ transform:translateX(-8px); filter:brightness(0.5) sepia(1) saturate(8) hue-rotate(-25deg); }
+  40%{ transform:translateX(8px);  filter:brightness(0.5) sepia(1) saturate(8) hue-rotate(-25deg); }
+  60%{ transform:translateX(-6px); }
+  80%{ transform:translateX(6px); }
+}
+.fighter.fainted .fighter-img { animation:faintOut 0.85s ease forwards; }
+@keyframes faintOut { to { opacity:0; transform:translateY(26px) scale(0.65); } }
+
+/* Chớp màu theo hệ */
+.type-flash { position:absolute; inset:0; pointer-events:none; opacity:0; z-index:3; }
+.type-flash.on { animation:typeFlash 0.5s ease; }
+@keyframes typeFlash { 0%{opacity:0;} 30%{opacity:0.5;} 100%{opacity:0;} }
+
+/* Nhật ký trận đấu */
+.battle-log {
+  margin-top:10px; background:#191b2e; color:#e8eaf6; border-radius:12px; padding:10px 12px;
+  height:88px; overflow-y:auto; -webkit-overflow-scrolling:touch; font-size:0.86rem; font-weight:700; line-height:1.55;
+}
+.log-line { animation:logIn 0.3s ease; }
+@keyframes logIn { from{ opacity:0; transform:translateY(6px); } to{ opacity:1; } }
+
+/* Kết quả */
+.battle-result {
+  position:fixed; inset:0; background:rgba(20,25,70,0.6); backdrop-filter:blur(4px);
+  display:none; align-items:center; justify-content:center; padding:24px; z-index:85;
+}
+.battle-result.show { display:flex; }
+.result-box {
+  background:#fff; border-radius:24px; border:5px solid var(--poke-yellow); box-shadow:var(--shadow);
+  padding:26px 22px; text-align:center; max-width:360px; width:100%;
+  animation:catchpop 0.5s cubic-bezier(0.18,0.89,0.32,1.28);
+}
+.result-text { font-size:1.4rem; font-weight:900; color:var(--poke-blue-dark); line-height:1.5; }
+.result-reward { display:block; margin-top:8px; color:#e65100; font-size:1.2rem; }
+.result-actions { display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+.battle-home { background:linear-gradient(135deg,#5664d6,#3b4cca); box-shadow:0 5px 0 var(--poke-blue-dark); }
+
+/* =====================================================================
+   BOSS ARENA — nền tối, rung lắc, boss khổng lồ
+   ===================================================================== */
+.arena.boss {
+  background:linear-gradient(180deg,#241433 0%,#16102b 55%,#0d0a1f 100%);
+  border-color:#7e57c2;
+  animation:bossShake 0.55s ease-in-out infinite;
+}
+@keyframes bossShake { 0%,100%{ transform:translateX(0);} 25%{ transform:translateX(-2.5px);} 75%{ transform:translateX(2.5px);} }
+.arena.boss .fighter-info { background:rgba(0,0,0,0.55); }
+.arena.boss .fighter-name { color:#fff; }
+
+/* Boss phóng to + hào quang */
+.fighter.foe.boss .fighter-img-wrap { width:140px; height:140px; }
+.fighter.foe.boss .fighter-img {
+  transform:scale(1.2);
+  filter:drop-shadow(0 0 14px rgba(150,40,255,0.95)) drop-shadow(0 4px 6px rgba(0,0,0,0.55));
+}
+
+/* Mốc bản đồ: dấu boss đã hạ */
+.mk-prog { white-space:nowrap; }
+
+/* Dòng phụ ở kết quả (thua boss) */
+.result-sub { display:block; margin-top:10px; font-size:0.95rem; color:#e65100; font-weight:800; line-height:1.5; }
+
+/* =====================================================================
+   HIỆU ỨNG ANIME — Catch Ball / VFX hệ / Z-Move / Dynamax
+   (chỉ animate transform & opacity -> mượt 60fps; dọn DOM sau khi xong)
+   ===================================================================== */
+
+/* ----- 1) Hoạt cảnh ném Pokéball ----- */
+.pokeball {
+  position:absolute; left:50%; top:50%; width:46px; height:46px; margin:-23px 0 0 -23px;
+  border-radius:50%; z-index:6; will-change:transform;
+  background:linear-gradient(#ee1515 0 46%, #1a1a1a 46% 54%, #fff 54% 100%);
+  border:3px solid #1a1a1a; box-shadow:0 4px 7px rgba(0,0,0,0.45);
+}
+.pokeball::after {
+  content:""; position:absolute; left:50%; top:50%; width:13px; height:13px; margin:-8px 0 0 -8px;
+  border-radius:50%; background:#fff; border:3px solid #1a1a1a;
+}
+.pokeball.throw  { animation:ballThrow 0.64s ease-in forwards; }
+.pokeball.drop   { animation:ballDrop 0.36s ease-in forwards; }
+.pokeball.wobble { transform:translateY(86px); animation:ballWobble 0.42s ease-in-out 3; }
+.pokeball.burst  { animation:ballBurst 0.35s ease forwards; }
+@keyframes ballThrow {
+  0%   { transform:translate(-120px,150px) scale(0.8) rotate(0); opacity:0; }
+  15%  { opacity:1; }
+  55%  { transform:translate(-10px,-120px) scale(1) rotate(520deg); }
+  100% { transform:translate(0,0) scale(1) rotate(720deg); }
+}
+@keyframes ballDrop   { 0%{ transform:translateY(0);} 100%{ transform:translateY(86px);} }
+@keyframes ballWobble {
+  0%,100% { transform:translateY(86px) rotate(0); }
+  25% { transform:translateY(86px) rotate(-24deg); }
+  75% { transform:translateY(86px) rotate(24deg); }
+}
+@keyframes ballBurst { 0%{ transform:translateY(86px) scale(1); opacity:1;} 100%{ transform:translateY(86px) scale(1.6); opacity:0;} }
+#pokemon-image.absorbing { animation:absorbIn 0.34s ease-in forwards; }
+@keyframes absorbIn { to { transform:scale(0); opacity:0; filter:brightness(0.4) drop-shadow(0 0 14px #ff3b3b); } }
+#pokemon-image.popout { animation:popOut 0.55s ease; }
+@keyframes popOut { 0%{ transform:scale(0); opacity:0; } 60%{ transform:scale(1.12);} 100%{ transform:scale(1); opacity:1; } }
+
+/* ----- 2) VFX tuyệt chiêu toàn màn hình ----- */
+.vfx-layer { position:fixed; inset:0; pointer-events:none; z-index:60; overflow:hidden; }
+@keyframes vfxFade { 0%{opacity:0;} 15%{opacity:1;} 100%{opacity:0;} }
+/* Điện ⚡ */
+.vfx-electric { background:radial-gradient(circle, rgba(255,240,120,0.22), transparent 70%); animation:vfxFade 0.6s ease; }
+.vfx-electric .vfx-svg { width:100%; height:100%; }
+.vfx-electric polyline { fill:none; stroke:#fff200; stroke-width:1.4; filter:drop-shadow(0 0 5px #fff200); animation:boltFlick 0.1s steps(1) infinite; }
+@keyframes boltFlick { 0%,40%{opacity:1;} 41%,100%{opacity:0.15;} }
+/* Lửa 🔥 */
+.vfx-fire { background:linear-gradient(0deg, rgba(255,70,0,0.32), transparent 55%); animation:vfxFade 0.9s ease; }
+.fire-p {
+  position:absolute; bottom:-24px; width:16px; height:16px; will-change:transform;
+  border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+  background:radial-gradient(circle at 50% 60%, #fff3b0, #ff5722 55%, rgba(255,87,34,0) 75%);
+  animation:fireRise 0.85s ease-out forwards;
+}
+@keyframes fireRise { 0%{ transform:translateY(0) scale(0.5); opacity:0;} 18%{opacity:1;} 100%{ transform:translateY(-92vh) scale(1.3); opacity:0;} }
+/* Nước 💧 */
+.vfx-water { animation:vfxFade 0.9s ease; }
+.water-wave { position:absolute; inset:0; background:linear-gradient(0deg, rgba(41,182,246,0.4), transparent 60%); animation:waterPulse 0.9s ease; }
+@keyframes waterPulse { 0%{opacity:0; transform:translateY(24px);} 35%{opacity:1;} 100%{opacity:0;} }
+.bubble {
+  position:absolute; bottom:-24px; border-radius:50%; will-change:transform;
+  background:rgba(255,255,255,0.5); border:1px solid rgba(255,255,255,0.85);
+  box-shadow:inset -2px -2px 4px rgba(255,255,255,0.6); animation:bubbleRise 0.9s ease-in forwards;
+}
+@keyframes bubbleRise { 0%{ transform:translateY(0); opacity:0;} 20%{opacity:1;} 100%{ transform:translateY(-88vh); opacity:0;} }
+
+/* ----- 3) Z-Move ----- */
+.zmove-btn {
+  width:100%; margin-top:10px; border:none; border-radius:16px; padding:14px; font-family:inherit;
+  font-size:1.15rem; font-weight:900; color:#fff; cursor:pointer; letter-spacing:1px;
+  background:linear-gradient(135deg,#ff00cc,#3333ff,#00e5ff); background-size:220% 220%;
+  box-shadow:0 0 16px rgba(0,200,255,0.9); animation:zGlow 1.2s ease infinite, zShine 3s linear infinite;
+}
+.zmove-btn:active { transform:translateY(2px); }
+@keyframes zGlow  { 0%,100%{ box-shadow:0 0 12px rgba(0,200,255,0.8);} 50%{ box-shadow:0 0 26px rgba(255,0,200,1);} }
+@keyframes zShine { 0%{ background-position:0% 50%;} 100%{ background-position:220% 50%;} }
+
+.zmove-cutscene {
+  position:fixed; inset:0; z-index:90; display:flex; align-items:center; justify-content:center;
+  background:rgba(8,6,20,0.82); pointer-events:none; overflow:hidden; animation:vfxFade2 2s ease forwards;
+}
+@keyframes vfxFade2 { 0%{opacity:0;} 12%{opacity:1;} 88%{opacity:1;} 100%{opacity:0;} }
+.zmove-cutscene .z-poke {
+  width:60%; max-width:300px; object-fit:contain; z-index:2;
+  filter:drop-shadow(0 0 22px #00e5ff) drop-shadow(0 0 40px #ff00cc); animation:zPokeIn 2s ease;
+}
+@keyframes zPokeIn { 0%{ transform:scale(0.3); opacity:0;} 25%{ transform:scale(1.15); opacity:1;} 80%{ transform:scale(1.1);} 100%{ transform:scale(1.3); opacity:0;} }
+.zmove-cutscene .z-aura {
+  position:absolute; width:120vmin; height:120vmin; border-radius:50%; z-index:1; filter:blur(8px); opacity:0.5;
+  background:conic-gradient(from 0deg, #ff00cc, #3333ff, #00e5ff, #ff00cc); animation:zSpin 2s linear;
+}
+@keyframes zSpin { from{ transform:rotate(0) scale(0.6);} to{ transform:rotate(360deg) scale(1.4);} }
+.zmove-cutscene .z-title {
+  position:absolute; bottom:18%; z-index:3; font-size:2.2rem; font-weight:900; color:#fff; letter-spacing:2px;
+  text-shadow:0 0 12px #00e5ff, 0 0 20px #ff00cc; animation:zPop 0.6s ease;
+}
+@keyframes zPop { 0%{ transform:scale(0); } 60%{ transform:scale(1.2);} 100%{ transform:scale(1);} }
+.z-shake { animation:zScreenShake 0.16s linear 12; }
+@keyframes zScreenShake { 0%,100%{ transform:translate(0,0);} 25%{ transform:translate(-4px,3px);} 50%{ transform:translate(4px,-3px);} 75%{ transform:translate(-3px,-3px);} }
+
+/* Nhật ký chữ to (Z-Move) */
+.log-line.big { font-size:1.05rem; color:#ffd54a; text-shadow:0 0 8px rgba(255,150,0,0.85); }
+
+/* ----- 5) Dynamax (đối thủ khổng lồ) ----- */
+.fighter.foe.dyna .fighter-img-wrap { width:140px; height:140px; }
+.fighter.foe.dyna .fighter-img { transform:scale(1.3); filter:drop-shadow(0 0 15px #ff0055); }
+
+/* =====================================================================
+   PHOTO STUDIO — フォトスタジオ
+   ===================================================================== */
+.photo-stage {
+  position:relative; width:100%; aspect-ratio:1/1; min-height:280px; border-radius:18px; overflow:hidden;
+  border:4px solid #fff; box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  display:flex; align-items:flex-end; justify-content:center;
+  transition:border-width 0.2s ease, box-shadow 0.2s ease;
+}
+.photo-poke {
+  width:72%; max-width:240px; object-fit:contain; margin-bottom:7%; position:relative; z-index:3;
+  filter:drop-shadow(0 7px 9px rgba(0,0,0,0.4));
+}
+.photo-caption {
+  position:absolute; bottom:8px; left:50%; transform:translateX(-50%); z-index:4;
+  background:rgba(0,0,0,0.5); color:#fff; font-weight:900; font-size:0.95rem;
+  padding:3px 16px; border-radius:999px; white-space:nowrap;
+}
+.photo-stage.captured { border-width:12px; box-shadow:0 0 0 3px var(--poke-yellow), 0 8px 24px rgba(0,0,0,0.45); }
+
+/* Lưới chọn 10 nền */
+.bg-picker { display:grid; grid-template-columns:repeat(auto-fill, minmax(58px,1fr)); gap:8px; }
+.bg-opt {
+  position:relative; aspect-ratio:1/1; min-height:54px; border-radius:12px; overflow:hidden;
+  border:3px solid transparent; cursor:pointer; padding:0; font-family:inherit;
+}
+.bg-opt.sel { border-color:var(--poke-yellow); box-shadow:0 0 8px rgba(255,203,5,0.85); }
+.bg-label {
+  position:absolute; left:0; right:0; bottom:0; z-index:2; font-size:0.5rem; font-weight:800; color:#fff;
+  background:rgba(0,0,0,0.5); padding:1px 2px; line-height:1.15; text-align:center;
+}
+
+/* Nút máy ảnh lớn */
+.photo-actions { display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:8px; }
+.cam-btn {
+  width:88px; height:88px; border-radius:50%; border:none; font-size:2.4rem; cursor:pointer;
+  background:linear-gradient(135deg,#ffe082,#ffb300); box-shadow:0 5px 0 #c67c00, 0 0 18px rgba(255,200,0,0.6);
+  animation:camPulse 1.6s ease-in-out infinite;
+}
+.cam-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #c67c00; }
+@keyframes camPulse { 0%,100%{ box-shadow:0 5px 0 #c67c00, 0 0 14px rgba(255,200,0,0.5);} 50%{ box-shadow:0 5px 0 #c67c00, 0 0 26px rgba(255,200,0,0.95);} }
+.photo-hint { text-align:center; font-weight:800; color:var(--poke-blue-dark); font-size:0.9rem; }
+
+/* Chớp trắng khi chụp */
+.photo-flash { position:fixed; inset:0; background:#fff; z-index:120; pointer-events:none; animation:flashWhite 0.22s ease; }
+@keyframes flashWhite { 0%{opacity:0;} 20%{opacity:1;} 100%{opacity:0;} }
+
+/* ---- 10 NỀN CSS (gradient + keyframes) ---- */
+/* 1) 草原 */
+.photo-bg-1 { background:linear-gradient(180deg,#bde78a 0%,#7cc04a 60%,#5a9e34 100%); }
+.photo-bg-1::after { content:""; position:absolute; right:14%; top:12%; width:22%; aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle,#fff59d,#ffe082 60%,rgba(255,224,130,0)); animation:sunGlow 3s ease-in-out infinite; }
+@keyframes sunGlow { 0%,100%{ opacity:0.85; transform:scale(1);} 50%{ opacity:1; transform:scale(1.08);} }
+/* 2) 火山 + tàn lửa */
+.photo-bg-2 { background:linear-gradient(180deg,#ff8a50 0%,#e53935 55%,#8e0000 100%); }
+.photo-bg-2::after { content:""; position:absolute; inset:0;
+  background-image:
+    radial-gradient(3px 3px at 20% 90%, #fff176, transparent),
+    radial-gradient(2px 2px at 50% 95%, #ffd54f, transparent),
+    radial-gradient(3px 3px at 75% 92%, #ffab40, transparent),
+    radial-gradient(2px 2px at 35% 88%, #fff59d, transparent),
+    radial-gradient(2px 2px at 88% 90%, #ffd54f, transparent);
+  animation:emberRise 1.8s linear infinite; }
+@keyframes emberRise { 0%{ transform:translateY(0); opacity:0.9;} 100%{ transform:translateY(-70%); opacity:0;} }
+/* 3) 海岸 */
+.photo-bg-3 { background:linear-gradient(180deg,#81d4fa 0%,#29b6f6 50%,#ffe082 50%,#ffd54f 100%); }
+.photo-bg-3::after { content:""; position:absolute; left:0; right:0; top:46%; height:9%;
+  background:linear-gradient(180deg, rgba(255,255,255,0.65), transparent); animation:waveShimmer 2.5s ease-in-out infinite; }
+@keyframes waveShimmer { 0%,100%{ transform:translateX(-4%);} 50%{ transform:translateX(4%);} }
+/* 4) 電気の街 + sét */
+.photo-bg-4 { background:linear-gradient(180deg,#3a1d6e 0%,#1a0f33 100%); }
+.photo-bg-4::after { content:""; position:absolute; inset:0; mix-blend-mode:screen; opacity:0;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,235,59,0.9) 48%, transparent 52%, transparent 60%, rgba(255,235,59,0.7) 66%, transparent 70%);
+  animation:boltFlash 2.6s steps(1) infinite; }
+@keyframes boltFlash { 0%,8%,12%,100%{opacity:0;} 9%{opacity:1;} 10%{opacity:0.2;} 11%{opacity:1;} }
+/* 5) 森 + đom đóm */
+.photo-bg-5 { background:linear-gradient(180deg,#1b5e20 0%,#0b2f14 100%); }
+.photo-bg-5::after { content:""; position:absolute; inset:0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, #c6ff00, transparent),
+    radial-gradient(2px 2px at 70% 50%, #b2ff59, transparent),
+    radial-gradient(1.5px 1.5px at 45% 70%, #eaff8a, transparent),
+    radial-gradient(2px 2px at 85% 25%, #c6ff00, transparent),
+    radial-gradient(1.5px 1.5px at 30% 55%, #b2ff59, transparent);
+  animation:twinkle 2.4s ease-in-out infinite; }
+@keyframes twinkle { 0%,100%{opacity:0.25;} 50%{opacity:1;} }
+/* 6) 雪山 + tuyết rơi */
+.photo-bg-6 { background:linear-gradient(180deg,#eceff1 0%,#b0bec5 60%,#78909c 100%); }
+.photo-bg-6::after { content:""; position:absolute; left:0; right:0; top:-100%; height:200%;
+  background-image:
+    radial-gradient(2px 2px at 15% 10%, #fff, transparent),
+    radial-gradient(2px 2px at 45% 25%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 70% 15%, #fff, transparent),
+    radial-gradient(2px 2px at 85% 30%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 30% 40%, #fff, transparent);
+  background-size:100% 50%; animation:snowFall 5s linear infinite; }
+@keyframes snowFall { from{ transform:translateY(0);} to{ transform:translateY(50%);} }
+/* 7) 洞窟 pha lê */
+.photo-bg-7 { background:linear-gradient(180deg,#7e57c2 0%,#4527a0 60%,#311b92 100%); }
+.photo-bg-7::after { content:""; position:absolute; inset:0;
+  background-image:
+    radial-gradient(2px 2px at 25% 35%, #fff, transparent),
+    radial-gradient(2px 2px at 65% 55%, #e1bee7, transparent),
+    radial-gradient(1.5px 1.5px at 80% 30%, #fff, transparent),
+    radial-gradient(2px 2px at 40% 70%, #d1c4e9, transparent);
+  animation:twinkle 1.8s ease-in-out infinite; }
+/* 8) ドラゴン谷 + sương */
+.photo-bg-8 { background:linear-gradient(180deg,#455a64 0%,#263238 60%,#1a1a2e 100%); }
+.photo-bg-8::after { content:""; position:absolute; left:-30%; right:-30%; top:40%; height:40%;
+  background:radial-gradient(ellipse at center, rgba(255,255,255,0.18), transparent 70%); animation:mistDrift 6s ease-in-out infinite; }
+@keyframes mistDrift { 0%,100%{ transform:translateX(-10%);} 50%{ transform:translateX(10%);} }
+/* 9) 霊殿 hoàng hôn + mây */
+.photo-bg-9 { background:linear-gradient(180deg,#ffb74d 0%,#f4511e 45%,#b71c5b 100%); }
+.photo-bg-9::after { content:""; position:absolute; left:-20%; right:-20%; top:25%; height:18%; border-radius:50%;
+  background:linear-gradient(180deg, rgba(255,255,255,0.35), transparent); filter:blur(4px); animation:cloudDrift 8s linear infinite; }
+@keyframes cloudDrift { from{ transform:translateX(-12%);} to{ transform:translateX(12%);} }
+/* 10) 宇宙 + sao */
+.photo-bg-10 { background:linear-gradient(180deg,#1a0b3d 0%,#0a0420 55%,#000 100%); }
+.photo-bg-10::after { content:""; position:absolute; inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 15% 20%, #fff, transparent),
+    radial-gradient(2px 2px at 40% 35%, #fff, transparent),
+    radial-gradient(1px 1px at 65% 15%, #fff, transparent),
+    radial-gradient(2px 2px at 80% 45%, #b3e5fc, transparent),
+    radial-gradient(1.5px 1.5px at 25% 55%, #fff, transparent),
+    radial-gradient(1px 1px at 55% 65%, #fff, transparent),
+    radial-gradient(2px 2px at 90% 70%, #fff, transparent);
+  animation:twinkle 2.8s ease-in-out infinite; }

@@ -15,8 +15,20 @@ function normalizeState() {
   gameState.shinyPokedex = Array.isArray(gameState.shinyPokedex) ? gameState.shinyPokedex : [];
   gameState.candy        = gameState.candy || 0;
   gameState.missions     = gameState.missions || null;
-  // Vùng đã "thấy mở khóa": lần đầu khởi tạo = các vùng đang mở
-  // (để KHÔNG ăn mừng nhầm những vùng người chơi đã mở từ trước).
+  if (!gameState.bossDefeated || typeof gameState.bossDefeated !== "object") gameState.bossDefeated = {};
+
+  // MIGRATE: bé nào trước đây đã mở vùng kế theo luật cũ (>=50 con ở vùng yêu cầu)
+  // -> đánh dấu boss vùng đó đã hạ, để KHÔNG bị tụt tiến trình khi đổi sang khóa-bằng-boss.
+  REGIONS.forEach(r => {
+    if (r.requires) {
+      const req = REGIONS.find(x => x.key === r.requires.region);
+      if (req && gameState.bossDefeated[req.key] !== true && countCaughtInRegion(req) >= UNLOCK_NEED) {
+        gameState.bossDefeated[req.key] = true;
+      }
+    }
+  });
+
+  // Vùng đã "thấy mở khóa": khởi tạo = các vùng đang mở (tránh ăn mừng nhầm).
   if (!Array.isArray(gameState.seenUnlocked)) {
     gameState.seenUnlocked = REGIONS.filter(r => isRegionUnlocked(r)).map(r => r.key);
   }
@@ -76,10 +88,24 @@ function loadGame() {
 function countCaughtInRegion(region) {
   return gameState.pokedex.filter(id => id >= region.start && id <= region.end).length;
 }
+/* Vùng mở khóa khi BOSS của vùng yêu cầu đã bị hạ (Kanto luôn mở) */
 function isRegionUnlocked(region) {
   if (!region.requires) return true;
-  const req = REGIONS.find(r => r.key === region.requires.region);
-  return countCaughtInRegion(req) >= region.requires.count;
+  return gameState.bossDefeated[region.requires.region] === true;
+}
+
+/* Số con cần thu thập để Boss 👑 xuất hiện (80% tổng vùng) */
+function bossThresholdCount(region) {
+  return Math.ceil((region.end - region.start + 1) * BOSS_THRESHOLD);
+}
+/* Boss đã hạ chưa */
+function isBossDefeated(region) {
+  return gameState.bossDefeated[region.key] === true;
+}
+/* Boss đã sẵn sàng thách đấu: vùng đã mở, đủ 80%, chưa hạ */
+function isBossAvailable(region) {
+  return isRegionUnlocked(region) && !isBossDefeated(region) &&
+         countCaughtInRegion(region) >= bossThresholdCount(region);
 }
 /* ID lớn nhất trong các vùng đã mở -> phạm vi cho quiz (151/251/386/493) */
 function maxUnlockedEnd() {
@@ -120,7 +146,7 @@ function progressMission(track, amount) {
   renderMissions();
 }
 function renderMissions() {
-  if (!gameState.missions) return;
+  if (!missionList || !gameState.missions) return;   // khung nhiệm vụ đã ẩn khỏi main
   missionList.innerHTML = "";
   gameState.missions.tasks.forEach(t => {
     const item = document.createElement("div");
@@ -167,11 +193,4 @@ function renderTrainerCard() {
   updateCandyDisplays();
 }
 
-/* ===== TEXT-TO-SPEECH (tiếng Nhật) ===== */
-function speakName(text) {
-  if (!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "ja-JP"; u.rate = 0.9; u.pitch = 1.1;
-  window.speechSynthesis.speak(u);
-}
+/* (speakName đã chuyển sang js/audio.js với việc chọn giọng ja-JP chất lượng cao) */

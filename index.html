@@ -43,18 +43,109 @@
         </div>
       </div>
 
-      <!-- Daily Missions -->
-      <div class="mission-box">
-        <div class="mission-title">📜 オーキド博士の チャレンジ</div>
-        <div id="mission-list"></div>
+      <!-- 3 nút điều hướng chính -->
+      <button class="menu-btn quiz-launch" id="quiz-launch">🧠 スーパークイズ<small>タイプ・しんか・おもさ クイズ！</small></button>
+      <button class="menu-btn get-launch" id="get-launch">🗺️ ポケモンGET<small>ちほうを ぼうけんして ゲット！</small></button>
+      <button class="menu-btn battle-launch" id="battle-launch">⚔️ ポケモンバトル<small>つかまえた ポケモンで しょうぶ！</small></button>
+      <button class="menu-btn photo-launch" id="photo-launch">📷 フォトスタジオ<small>すきな ばしょで しゃしんを とろう！</small></button>
+    </div>
+  </div>
+
+  <!-- ============ フォトスタジオ (Phòng chụp ảnh) ============ -->
+  <div class="screen" id="photo-screen" style="display:none;">
+    <div class="home-inner">
+      <div class="get-header">
+        <button class="back-btn-dark" id="photo-back-btn">← もどる</button>
+        <h2 class="get-title">📷 フォトスタジオ</h2>
       </div>
 
-      <!-- Quiz mode -->
-      <button class="quiz-launch" id="quiz-launch">🧠 スーパークイズ モード<small>タイプ・ばんごう・おもさ クイズ！</small></button>
+      <!-- Bước 1: chọn Pokémon -->
+      <div id="photo-choose">
+        <div class="section-label">しゃしんを とる ポケモンを えらんでね！</div>
+        <div class="choose-grid" id="photo-choose-grid"></div>
+      </div>
 
-      <!-- Adventure Map -->
-      <div class="section-label">🗺️ ぼうけんマップ — ちほうを えらぼう！</div>
-      <div class="adventure-map" id="adventure-map"></div>
+      <!-- Bước 2: studio -->
+      <div id="photo-studio" style="display:none;">
+        <div class="photo-stage photo-bg-1" id="photo-stage">
+          <img class="photo-poke" id="photo-poke" src="" alt="">
+          <div class="photo-caption" id="photo-caption"></div>
+        </div>
+        <div class="section-label">はいけいを えらぼう！</div>
+        <div class="bg-picker" id="bg-picker"></div>
+        <div class="photo-actions">
+          <button class="cam-btn" id="cam-btn" aria-label="撮影">📷</button>
+          <button class="back-btn-dark" id="photo-change-btn">↺ べつの ポケモン</button>
+        </div>
+        <p class="photo-hint" id="photo-hint">カメラボタンを タップ！</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ポケモンGET (Bản đồ thám hiểm) ============ -->
+  <div class="screen" id="getmap-screen" style="display:none;">
+    <div class="home-inner getmap-inner">
+      <div class="get-header">
+        <button class="back-btn-dark" id="get-back-btn">← もどる</button>
+        <h2 class="get-title">🗺️ ポケモンGET</h2>
+      </div>
+      <div class="section-label">ちほうを えらんで ぼうけんに でかけよう！</div>
+      <!-- Bản đồ nền + các 地方 đánh dấu bằng mốc bấm được -->
+      <div class="map-board" id="map-board"></div>
+    </div>
+  </div>
+
+  <!-- ============ ポケモンバトル (Sàn đấu) ============ -->
+  <div class="screen" id="battle-screen" style="display:none;">
+    <div class="home-inner battle-inner">
+      <div class="get-header">
+        <button class="back-btn-dark" id="battle-back-btn">← もどる</button>
+        <h2 class="get-title">⚔️ ポケモンバトル</h2>
+      </div>
+
+      <!-- Bước 1: chọn quân -->
+      <div id="battle-choose">
+        <div class="section-label">あいぼうを えらんでね！</div>
+        <div class="choose-grid" id="choose-grid"></div>
+      </div>
+
+      <!-- Bước 2: sàn đấu -->
+      <div id="battle-arena" style="display:none;">
+        <div class="arena" id="arena">
+          <!-- Đối thủ (trên/phải) -->
+          <div class="fighter foe" id="foe-side">
+            <div class="fighter-info">
+              <span class="fighter-name" id="foe-name">？？？</span>
+              <div class="hp-wrap"><div class="hp-bar"><div class="hp-fill" id="foe-hp"></div></div></div>
+            </div>
+            <div class="fighter-img-wrap"><img class="fighter-img" id="foe-img" alt="" /></div>
+          </div>
+          <!-- Bé (dưới/trái) -->
+          <div class="fighter mine" id="my-side">
+            <div class="fighter-img-wrap"><img class="fighter-img" id="my-img" alt="" /></div>
+            <div class="fighter-info">
+              <span class="fighter-name" id="my-name">？？？</span>
+              <div class="hp-wrap"><div class="hp-bar"><div class="hp-fill" id="my-hp"></div></div></div>
+            </div>
+          </div>
+          <div class="type-flash" id="type-flash"></div>
+        </div>
+
+        <button class="zmove-btn" id="zmove-btn" style="display:none;">⚡ Zワザ発動！ ⚡</button>
+        <div class="battle-log" id="battle-log"></div>
+        <button class="menu-btn battle-start" id="battle-start">バトルスタート！</button>
+      </div>
+
+      <!-- Kết quả -->
+      <div class="battle-result" id="battle-result">
+        <div class="result-box">
+          <div class="result-text" id="result-text"></div>
+          <div class="result-actions">
+            <button class="menu-btn" id="battle-again">⚔️ もういちど</button>
+            <button class="menu-btn battle-home" id="battle-home">🏠 ホームへ</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -130,9 +221,13 @@
   <script src="./js/config.js"></script>
   <script src="./js/dom.js"></script>
   <script src="./js/state.js"></script>
+  <script src="./js/audio.js"></script>
   <script src="./js/api.js"></script>
+  <script src="./js/effects.js"></script>
   <script src="./js/game.js"></script>
   <script src="./js/quiz.js"></script>
+  <script src="./js/battle.js"></script>
+  <script src="./js/photo.js"></script>
   <script src="./js/main.js"></script>
 </body>
 </html>

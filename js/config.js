@@ -18,12 +18,17 @@ const artworkUrl      = (id) => `https://raw.githubusercontent.com/PokeAPI/sprit
 const shinyArtworkUrl = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
 const pad = (n) => String(n).padStart(3, "0");
 
-/* Vùng đất + điều kiện mở khóa */
+/* Ngưỡng thu thập (%) để icon Boss 👑 xuất hiện trên bản đồ */
+const BOSS_THRESHOLD = 0.80;
+/* HP gốc của Boss nhân thêm để tăng độ khó */
+const BOSS_HP_MULT = 1.5;
+
+/* Vùng đất + Boss huyền thoại. Vùng kế mở khóa khi HẠ BOSS của vùng yêu cầu. */
 const REGIONS = [
-  { key:"kanto",  name:"カントー地方", short:"カントー", start:1,   end:151, color:"#4caf50", emoji:"🍃", requires:null },
-  { key:"johto",  name:"ジョウト地方", short:"ジョウト", start:152, end:251, color:"#f4a300", emoji:"🔔", requires:{ region:"kanto",  count:UNLOCK_NEED } },
-  { key:"hoenn",  name:"ホウエン地方", short:"ホウエン", start:252, end:386, color:"#2196f3", emoji:"🌊", requires:{ region:"johto",  count:UNLOCK_NEED } },
-  { key:"sinnoh", name:"シンオウ地方", short:"シンオウ", start:387, end:493, color:"#7e57c2", emoji:"❄️", requires:{ region:"hoenn",  count:UNLOCK_NEED } }
+  { key:"kanto",  name:"カントー地方", short:"カントー", start:1,   end:151, color:"#4caf50", emoji:"🍃", requires:null,               boss:{ id:150, name:"ミュウツー" } },
+  { key:"johto",  name:"ジョウト地方", short:"ジョウト", start:152, end:251, color:"#f4a300", emoji:"🔔", requires:{ region:"kanto"  }, boss:{ id:249, name:"ルギア" } },
+  { key:"hoenn",  name:"ホウエン地方", short:"ホウエン", start:252, end:386, color:"#2196f3", emoji:"🌊", requires:{ region:"johto"  }, boss:{ id:384, name:"レックウザ" } },
+  { key:"sinnoh", name:"シンオウ地方", short:"シンオウ", start:387, end:493, color:"#7e57c2", emoji:"❄️", requires:{ region:"hoenn"  }, boss:{ id:493, name:"アルセウス" } }
 ];
 
 /* Map hệ EN -> JP (đơn giản cho bé) */
@@ -45,7 +50,7 @@ const MISSION_POOL = [
 ];
 
 /* ===== Biến runtime dùng chung giữa các module ===== */
-let gameState = { score:0, pokedex:[], shinyPokedex:[], candy:0, missions:null };
+let gameState = { score:0, pokedex:[], shinyPokedex:[], candy:0, missions:null, bossDefeated:{} };
 let questionTimer = null;
 let oakTimer = null;
 let unlockTimer = null;     // hẹn giờ ẩn popup "mở khóa vùng mới"

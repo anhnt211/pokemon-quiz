@@ -4,7 +4,7 @@
    - PokéAPI:  stale-while-revalidate (dùng cache, cập nhật nền)
    - Ảnh GitHub: cache-first (ảnh đã xem -> lưu lại để xem offline)
    ===================================================================== */
-const CACHE = "poke-quiz-v3";
+const CACHE = "poke-quiz-v9";
 
 const APP_SHELL = [
   "./",
@@ -14,10 +14,16 @@ const APP_SHELL = [
   "./js/config.js",
   "./js/dom.js",
   "./js/state.js",
+  "./js/audio.js",
   "./js/api.js",
+  "./js/effects.js",
   "./js/game.js",
   "./js/quiz.js",
+  "./js/battle.js",
+  "./js/photo.js",
   "./js/main.js",
+  "./img/main-bg.jpg",
+  "./img/map-bg.jpg",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-180.png"
@@ -95,9 +101,9 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(staleWhileRevalidate(req));
     return;
   }
-  // App shell cùng origin -> cache-first
+  // App shell cùng origin (HTML/CSS/JS) -> network-first (luôn lấy bản mới khi online)
   if (url.origin === self.location.origin) {
-    event.respondWith(cacheFirst(req));
+    event.respondWith(networkFirst(req));
     return;
   }
 });
