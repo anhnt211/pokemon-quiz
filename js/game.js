@@ -110,6 +110,7 @@ function leaveActive() {
   loadToken++;
   clearTimeout(questionTimer);
   if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  if (typeof bgmStop === "function") bgmStop();   // tắt nhạc nền nếu đang phát
   closePokedex();
   hideCatchPopup();
 }

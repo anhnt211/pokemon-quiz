@@ -100,3 +100,14 @@ const bgPicker        = document.getElementById("bg-picker");
 const camBtn          = document.getElementById("cam-btn");
 const photoChangeBtn  = document.getElementById("photo-change-btn");
 const photoHint       = document.getElementById("photo-hint");
+// Album
+const albumBtn        = document.getElementById("album-btn");
+const photoMainHeader = document.getElementById("photo-main-header");
+const photoAlbum      = document.getElementById("photo-album");
+const albumGrid       = document.getElementById("album-grid");
+const albumEmpty      = document.getElementById("album-empty");
+const albumCloseBtn   = document.getElementById("album-close-btn");
+// Lightbox
+const lightbox        = document.getElementById("lightbox");
+const lightboxImg     = document.getElementById("lightbox-img");
+const lightboxClose   = document.getElementById("lightbox-close");

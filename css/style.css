@@ -2,17 +2,19 @@
    POKÉ-QUIZ — STYLESHEET
    ===================================================================== */
 :root {
-  --poke-yellow: #ffcb05; --poke-blue: #3b4cca; --poke-blue-dark: #2a3699;
-  --poke-red: #ee1515; --card-bg: #ffffff; --text-dark: #2b2b2b;
-  --shadow: 0 10px 30px rgba(0,0,0,0.25);
+  /* Palette dịu mắt theo style Pokémon Home / Unite */
+  --poke-yellow: #f6c453; --poke-blue: #3b4cca; --poke-blue-dark: #2a3699;
+  --poke-red: #f56565; --card-bg: #ffffff; --text-dark: #2d3748;
+  --bg-soft: #f5f7fa; --card-border: #e7eaf1; --ink-soft: #4a5568;
+  --shadow: 0 8px 24px rgba(45,55,72,0.10);
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none; }
 /* Bố cục khối thuần: KHÔNG đặt height cố định, KHÔNG đặt overflow trên html/body.
    Đây là cách cuộn dọc đáng tin cậy nhất trên mọi trình duyệt (kể cả iOS Safari).
    (overflow-x:hidden ở html/body từng biến chúng thành vùng cuộn riêng và khoá cuộn dọc.) */
 body {
-  font-family:"Hiragino Kaku Gothic ProN","Yu Gothic","Segoe UI",system-ui,sans-serif;
-  background:linear-gradient(160deg,var(--poke-blue) 0%,var(--poke-blue-dark) 100%);
+  font-family:'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, "Yu Gothic", sans-serif;
+  background:var(--bg-soft);
   min-height:100vh; min-height:100dvh;
   color:var(--text-dark);
   display:flex; align-items:center; justify-content:center;   /* căn giữa khung */
@@ -34,21 +36,20 @@ body {
 
 /* ===== HOME ===== */
 .home-inner {
-  background:var(--card-bg); border-radius:24px; border:4px solid var(--poke-yellow);
-  box-shadow:var(--shadow); padding:22px 18px; display:flex; flex-direction:column; gap:16px;
+  background:var(--card-bg); border-radius:20px; border:1px solid var(--card-border);
+  box-shadow:var(--shadow); padding:18px 16px; display:flex; flex-direction:column; gap:12px;
   height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch;   /* cuộn nội dung dài trong khung */
 }
 .home-logo { text-align:center; }
 .home-logo h1 {
-  font-size:1.9rem; color:var(--poke-blue); line-height:1.1;
-  text-shadow:2px 2px 0 var(--poke-yellow), 3px 3px 0 rgba(0,0,0,0.1); letter-spacing:1px;
+  font-size:1.5rem; color:var(--poke-blue); line-height:1.1; font-weight:800; letter-spacing:0.5px;
 }
-.home-logo p { margin-top:6px; font-size:0.9rem; font-weight:700; color:var(--poke-red); }
+.home-logo p { margin-top:3px; font-size:0.78rem; font-weight:600; color:var(--ink-soft); }
 
-/* Trainer Card */
+/* Trainer Card — xanh hạm đội thanh lịch */
 .trainer-card {
-  background:linear-gradient(135deg,#3b4cca 0%,#5664d6 100%); color:#fff;
-  border-radius:18px; padding:14px 16px; box-shadow:0 4px 0 rgba(0,0,0,0.15);
+  background:#2a4365; color:#fff;
+  border-radius:16px; padding:12px 16px; box-shadow:0 4px 6px rgba(0,0,0,0.06);
 }
 .trainer-top { display:flex; justify-content:space-between; align-items:center; gap:8px; }
 .trainer-rank { font-size:1.05rem; font-weight:900; }
@@ -74,22 +75,23 @@ body {
 
 /* Nút menu chính (chung) + biến thể màu */
 .menu-btn {
-  width:100%; border:none; border-radius:18px; padding:16px; font-size:1.15rem; font-weight:900;
-  cursor:pointer; font-family:inherit; letter-spacing:0.5px; color:#fff; text-align:center;
-  background:linear-gradient(135deg,#5664d6,#3b4cca); box-shadow:0 5px 0 var(--poke-blue-dark);
-  transition:transform 0.1s ease, box-shadow 0.1s ease;
+  width:100%; border:none; border-radius:16px; padding:14px 16px;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-family:inherit; color:#fff; cursor:pointer;
+  box-shadow:0 4px 6px rgba(0,0,0,0.05); transition:all 0.2s ease;
 }
-.menu-btn small { display:block; font-size:0.72rem; font-weight:700; opacity:0.92; margin-top:3px; }
-.menu-btn:active { transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,0.3); }
-.menu-btn:disabled { opacity:0.6; cursor:default; }
-.quiz-launch   { background:linear-gradient(135deg,#9c27b0,#673ab7); box-shadow:0 5px 0 #4a148c; }
-.quiz-launch:active   { box-shadow:0 2px 0 #4a148c; }
-.get-launch    { background:linear-gradient(135deg,#43a047,#2e7d32); box-shadow:0 5px 0 #1b5e20; }
-.get-launch:active    { box-shadow:0 2px 0 #1b5e20; }
-.battle-launch { background:linear-gradient(135deg,#ff7043,#e53935); box-shadow:0 5px 0 #b71c1c; }
-.battle-launch:active { box-shadow:0 2px 0 #b71c1c; }
-.battle-start  { background:linear-gradient(135deg,#ffca28,#ff8f00); color:#4e342e; box-shadow:0 5px 0 #c66900; margin-top:10px; }
-.battle-start:active  { box-shadow:0 2px 0 #c66900; }
+.menu-btn:active { transform:scale(0.98); box-shadow:0 2px 4px rgba(0,0,0,0.08); }
+.menu-btn:disabled { opacity:0.55; cursor:default; }
+.btn-row { display:inline-flex; align-items:center; gap:10px; }
+.btn-ico { width:24px; height:24px; flex-shrink:0; display:block; }
+.btn-title { font-size:1.05rem; font-weight:800; letter-spacing:0.3px; }
+.menu-btn small { display:block; font-size:0.66rem; font-weight:600; opacity:0.85; }
+/* Màu nút dịu mắt, đồng bộ */
+.quiz-launch   { background:#9f7aea; }
+.get-launch    { background:#48bb78; }
+.battle-launch { background:#f56565; }
+.photo-launch  { background:#63b3ed; }
+.battle-start  { background:#f6ad55; color:#fff; margin-top:10px; }
 
 /* Header màn hình ポケモンGET */
 .get-header { display:flex; align-items:center; gap:12px; margin-bottom:2px; }
@@ -197,8 +199,8 @@ body {
 
 /* ===== GAME / QUIZ shared card ===== */
 .game-card {
-  width:100%; height:100%; background:var(--card-bg); border-radius:24px; box-shadow:var(--shadow);
-  overflow:hidden; border:4px solid var(--poke-yellow); display:flex; flex-direction:column; position:relative;
+  width:100%; height:100%; background:var(--card-bg); border-radius:20px; box-shadow:var(--shadow);
+  overflow:hidden; border:1px solid var(--card-border); display:flex; flex-direction:column; position:relative;
 }
 /* Các phần cố định không co; vùng giữa (ảnh / câu hỏi) co giãn để 4 nút luôn hiện */
 .status-bar, .title-area, #status-text, #quiz-status, .options-grid { flex-shrink:0; }
@@ -343,15 +345,10 @@ body {
 .dex-cell.locked .dex-name { color:#999; }
 
 /* =====================================================================
-   ẢNH NỀN MÀN MAIN
+   MÀN MAIN — nền sạch, dịu mắt (bỏ ảnh nền AI cho thoáng, chuyên nghiệp)
    ===================================================================== */
-#home-screen .home-inner {
-  background-image:
-    linear-gradient(180deg, rgba(59,76,202,0.12) 0%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0.95) 70%),
-    url("../img/main-bg.jpg");
-  background-size: cover; background-position: top center; background-repeat: no-repeat;
-}
-#home-screen .home-logo h1 { text-shadow: 2px 2px 0 var(--poke-yellow), 0 2px 8px rgba(0,0,0,0.25); }
+#home-screen .home-inner { background:var(--card-bg); }
+#home-screen .home-logo h1 { text-shadow:none; }
 
 /* =====================================================================
    MÀN ポケモンGET — BẢN ĐỒ NỀN + MỐC ĐÁNH DẤU
@@ -653,11 +650,11 @@ body {
 /* Nút máy ảnh lớn */
 .photo-actions { display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:8px; }
 .cam-btn {
-  width:88px; height:88px; border-radius:50%; border:none; font-size:2.4rem; cursor:pointer;
-  background:linear-gradient(135deg,#ffe082,#ffb300); box-shadow:0 5px 0 #c67c00, 0 0 18px rgba(255,200,0,0.6);
-  animation:camPulse 1.6s ease-in-out infinite;
+  width:84px; height:84px; border-radius:50%; border:none; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:#f6ad55; box-shadow:0 4px 10px rgba(0,0,0,0.12); transition:all 0.2s ease;
 }
-.cam-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #c67c00; }
+.cam-btn:active { transform:scale(0.96); box-shadow:0 2px 6px rgba(0,0,0,0.15); }
 @keyframes camPulse { 0%,100%{ box-shadow:0 5px 0 #c67c00, 0 0 14px rgba(255,200,0,0.5);} 50%{ box-shadow:0 5px 0 #c67c00, 0 0 26px rgba(255,200,0,0.95);} }
 .photo-hint { text-align:center; font-weight:800; color:var(--poke-blue-dark); font-size:0.9rem; }
 
@@ -883,3 +880,49 @@ body {
   86%      { opacity:1; transform:translate(170%,62%) rotate(20deg); }
   88%,100% { opacity:0; transform:translate(170%,62%) rotate(20deg); }
 }
+
+/* =====================================================================
+   ALBUM ẢNH KỶ NIỆM + LIGHTBOX
+   ===================================================================== */
+.get-header { flex-wrap:wrap; }
+.get-header .get-title { flex:1; }
+.album-btn {
+  appearance:none; border:none; background:#7e57c2; color:#fff; font-weight:800;
+  font-size:0.78rem; padding:8px 12px; border-radius:999px; cursor:pointer;
+  box-shadow:0 3px 0 #4527a0; white-space:nowrap; font-family:inherit;
+}
+.album-btn:active { transform:translateY(2px); box-shadow:0 1px 0 #4527a0; }
+
+.album-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr)); gap:10px;
+}
+.album-cell {
+  position:relative; border-radius:14px; overflow:hidden; border:3px solid var(--poke-yellow);
+  box-shadow:0 3px 8px rgba(0,0,0,0.2); background:#fff; aspect-ratio:1/1;
+}
+.album-cell img { width:100%; height:100%; object-fit:cover; display:block; cursor:pointer; }
+.album-del {
+  position:absolute; top:4px; right:4px; width:30px; height:30px; border-radius:50%;
+  border:none; background:rgba(238,21,21,0.92); color:#fff; font-size:0.95rem; cursor:pointer;
+  box-shadow:0 2px 5px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; line-height:1;
+}
+.album-del:active { transform:scale(0.9); }
+.album-empty { text-align:center; color:#888; font-weight:800; padding:30px 12px; line-height:1.8; }
+
+/* Lightbox phóng to */
+.lightbox {
+  position:fixed; inset:0; background:rgba(0,0,0,0.88); display:none; align-items:center; justify-content:center;
+  padding:24px; z-index:130;
+}
+.lightbox.open { display:flex; animation:flashWhite 0.001s; }
+.lightbox img {
+  max-width:96%; max-height:88%; border-radius:14px; border:5px solid #fff;
+  box-shadow:0 10px 40px rgba(0,0,0,0.6); animation:lbZoom 0.3s cubic-bezier(0.18,0.89,0.32,1.28);
+}
+@keyframes lbZoom { from{ transform:scale(0.6); opacity:0;} to{ transform:scale(1); opacity:1;} }
+.lightbox-close {
+  position:absolute; top:calc(14px + env(safe-area-inset-top,0px)); right:18px;
+  width:44px; height:44px; border-radius:50%; border:none; background:#fff; color:#222;
+  font-size:1.3rem; font-weight:900; cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.5); z-index:2;
+}
+.lightbox-close:active { transform:scale(0.92); }

@@ -14,6 +14,10 @@ const QUIZ_ROUND      = 5;
 const QUIZ_CANDY      = 10;   // kẹo mỗi câu quiz đúng
 const MISSION_REWARD  = 50;   // kẹo mỗi nhiệm vụ hoàn thành
 
+/* ===== ÂM LƯỢNG CHUẨN (an toàn cho trẻ nhỏ) ===== */
+const DEFAULT_BGM_VOLUME = 0.3;   // nhạc nền: nhỏ nhẹ
+const DEFAULT_SFX_VOLUME = 0.5;   // hiệu ứng: vừa nghe
+
 const artworkUrl      = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 const shinyArtworkUrl = (id) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
 const pad = (n) => String(n).padStart(3, "0");

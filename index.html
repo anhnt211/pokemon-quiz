@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ポケクイズ" />
   <meta name="theme-color" content="#3b4cca" />
-  <title>ポケモン クイズ | だれだ？このポケモン</title>
+  <title>ポケモン クイズ</title>
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json" />
@@ -23,7 +23,6 @@
     <div class="home-inner">
       <div class="home-logo">
         <h1>ポケモン クイズ</h1>
-        <p>だれだ？このポケモン！</p>
       </div>
 
       <!-- Trainer Card -->
@@ -44,19 +43,44 @@
       </div>
 
       <!-- 3 nút điều hướng chính -->
-      <button class="menu-btn quiz-launch" id="quiz-launch">🧠 スーパークイズ<small>タイプ・しんか・おもさ クイズ！</small></button>
-      <button class="menu-btn get-launch" id="get-launch">🗺️ ポケモンGET<small>ちほうを ぼうけんして ゲット！</small></button>
-      <button class="menu-btn battle-launch" id="battle-launch">⚔️ ポケモンバトル<small>つかまえた ポケモンで しょうぶ！</small></button>
-      <button class="menu-btn photo-launch" id="photo-launch">📷 フォトスタジオ<small>すきな ばしょで しゃしんを とろう！</small></button>
+      <button class="menu-btn quiz-launch" id="quiz-launch">
+        <span class="btn-row">
+          <svg class="btn-ico" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2.5l1.9 5.1 5.1 1.9-5.1 1.9L12 16.5l-1.9-5.1L5 9.5l5.1-1.9L12 2.5z"/><circle cx="18.7" cy="17.6" r="1.5"/><circle cx="6" cy="16.6" r="1.1"/></svg>
+          <span class="btn-title">スーパークイズ</span>
+        </span>
+        <small>タイプ・しんか・おもさ クイズ！</small>
+      </button>
+      <button class="menu-btn get-launch" id="get-launch">
+        <span class="btn-row">
+          <svg class="btn-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M3 12h6m6 0h6" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="3.3" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12" r="1.2" fill="#fff"/></svg>
+          <span class="btn-title">ポケモンGET</span>
+        </span>
+        <small>ちほうを ぼうけんして ゲット！</small>
+      </button>
+      <button class="menu-btn battle-launch" id="battle-launch">
+        <span class="btn-row">
+          <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l11 11"/><path d="M19 5L8 16"/><path d="M3.5 18.5l3 3"/><path d="M20.5 18.5l-3 3"/></svg>
+          <span class="btn-title">ポケモンバトル</span>
+        </span>
+        <small>つかまえた ポケモンで しょうぶ！</small>
+      </button>
+      <button class="menu-btn photo-launch" id="photo-launch">
+        <span class="btn-row">
+          <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.6"/><path d="M8.5 7l1.2-2.2a1 1 0 0 1 .9-.5h2.8a1 1 0 0 1 .9.5L15.5 7"/><circle cx="12" cy="13.5" r="3.2"/></svg>
+          <span class="btn-title">フォトスタジオ</span>
+        </span>
+        <small>すきな ばしょで しゃしんを とろう！</small>
+      </button>
     </div>
   </div>
 
   <!-- ============ フォトスタジオ (Phòng chụp ảnh) ============ -->
   <div class="screen" id="photo-screen" style="display:none;">
     <div class="home-inner">
-      <div class="get-header">
+      <div class="get-header" id="photo-main-header">
         <button class="back-btn-dark" id="photo-back-btn">← もどる</button>
         <h2 class="get-title">📷 フォトスタジオ</h2>
+        <button class="album-btn" id="album-btn">🖼️ アルバム</button>
       </div>
 
       <!-- Bước 1: chọn Pokémon -->
@@ -74,10 +98,22 @@
         <div class="section-label">はいけいを えらぼう！</div>
         <div class="bg-picker" id="bg-picker"></div>
         <div class="photo-actions">
-          <button class="cam-btn" id="cam-btn" aria-label="撮影">📷</button>
+          <button class="cam-btn" id="cam-btn" aria-label="撮影">
+            <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#6b4a1e" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.6"/><path d="M8.5 7l1.2-2.2a1 1 0 0 1 .9-.5h2.8a1 1 0 0 1 .9.5L15.5 7"/><circle cx="12" cy="13.5" r="3.4"/></svg>
+          </button>
           <button class="back-btn-dark" id="photo-change-btn">↺ べつの ポケモン</button>
         </div>
         <p class="photo-hint" id="photo-hint">カメラボタンを タップ！</p>
+      </div>
+
+      <!-- Album ảnh kỷ niệm -->
+      <div id="photo-album" style="display:none;">
+        <div class="get-header">
+          <button class="back-btn-dark" id="album-close-btn">✕ とじる</button>
+          <h2 class="get-title">🖼️ アルバム</h2>
+        </div>
+        <p class="album-empty" id="album-empty" style="display:none;">📭 まだ しゃしんが ないよ！<br>カメラで とってみてね。</p>
+        <div class="album-grid" id="album-grid"></div>
       </div>
     </div>
   </div>
@@ -203,6 +239,12 @@
   <div class="catch-popup" id="catch-popup"><div class="bubble" id="catch-bubble">🎉 やったね！<span class="big" id="catch-popup-text">◯◯</span></div></div>
   <div class="oak-popup" id="oak-popup">よくやった！ オーキド博士から ごほうびだ！<br><span class="candy">🍬 +50</span></div>
   <div class="unlock-popup" id="unlock-popup"></div>
+
+  <!-- Lightbox phóng to ảnh Album -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="閉じる">✕</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
 
   <div class="dex-overlay" id="dex-overlay">
     <div class="dex-panel">

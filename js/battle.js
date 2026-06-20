@@ -44,6 +44,7 @@ function enterBattle() {
   battleArena.style.display = "none";
   battleChoose.style.display = "block";
   renderChooser();
+  bgmStart("battle");      // nhạc nền trận đấu
 }
 
 /* ===== Vào màn đấu BOSS ===== */
@@ -59,12 +60,14 @@ function enterBossBattle(region) {
   battleArena.style.display = "none";
   battleChoose.style.display = "block";
   renderChooser();
+  bgmStart("boss");        // nhạc nền Boss (kịch tính hơn)
 }
 
 function stopBattle() {
   battleToken++;
   clearTimeout(battleTimer);
   battleOver = true;
+  bgmStop();              // dừng nhạc nền trận đấu ngay
 }
 
 /* ===== Bước 1: chọn quân từ pokedex (đã bắt) ===== */
@@ -215,7 +218,8 @@ function performAttack(atkSide, defSide) {
     updateHp();
     defEl.classList.add("hit");
     flashType(atkType);
-    playSkillVFX(atkType);                 // tuyệt chiêu toàn màn (điện/lửa/nước)
+    playSkillVFX(atkType);                 // VFX toàn màn (điện/lửa/nước)
+    playSfx(atkType);                      // SFX đồng bộ NGAY lúc nhấp nháy
     setTimeout(() => defEl.classList.remove("hit"), 460);
     if (superEff) log("こうかは ばつぐんだ！");
     if (def.hp <= 0) defEl.classList.add("fainted");
@@ -262,7 +266,7 @@ function activateZMove() {
     foeFighter.hp = Math.max(0, foeFighter.hp - dmg);
     updateHp();
     foeSide.classList.add("hit");
-    flashType("electric"); playSkillVFX("electric");
+    flashType("electric"); playSkillVFX("electric"); playSfx("electric");
     setTimeout(() => foeSide.classList.remove("hit"), 460);
     logBig("究極のZワザが 炸裂した！");
     if (foeFighter.hp <= 0) {
@@ -278,6 +282,7 @@ function activateZMove() {
 function finishBattle(token) {
   if (token !== battleToken) return;
   battleOver = true;
+  bgmStop();              // trận đấu kết thúc -> tắt nhạc nền, trả lại yên tĩnh
   const win = myFighter.hp > 0;
 
   if (bossMode) { finishBossBattle(win); return; }

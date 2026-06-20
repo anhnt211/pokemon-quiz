@@ -21,7 +21,7 @@ huyền thoại** để mở vùng mới. Dữ liệu hình ảnh, tên, chỉ s
 | 📜 Nhiệm vụ Oak | 2 nhiệm vụ ngẫu nhiên/ngày, thưởng 🍬 50 (chạy ngầm, thưởng + popup) |
 | 🧠 Siêu Quiz | Câu hỏi **vô hạn** 4 dạng: **Hệ xuôi / Tiến hóa / Hệ ngược / So cân nặng**; phạm vi theo vùng đã mở |
 | ⚔️ ポケモンバトル | Đấu turn-based: chọn quân, đối thủ ngẫu nhiên, so stats + khắc hệ, animation; thắng +100 🍬 |
-| 📷 フォトスタジオ | Chọn Pokémon đã bắt + **10 nền CSS** (草原/火山/海岸/電気街/森/雪山/洞窟/ドラゴン谷/霊殿/宇宙); nút máy ảnh → chớp trắng + tiếng tách → khung ảnh polaroid |
+| 📷 フォトスタジオ | Chọn Pokémon đã bắt + **10 nền CSS nhiều lớp** (草原/火山/海岸/電気街/森/雪山/洞窟/ドラゴン谷/霊殿/宇宙); máy ảnh → chớp trắng + tiếng tách → **vẽ canvas → lưu Album** (key `pokeQuizAlbum`, tối đa 18, FIFO); màn **Album** lưới + xóa (🗑️) + **lightbox** phóng to |
 | 👑 Boss Battle | 4 Boss huyền thoại; hạ Boss để **mở khóa vùng kế**; sàn đấu tối + rung + boss khổng lồ; thắng +500 🍬 |
 | 🔊 Text-to-Speech | Đọc tên Pokémon bằng `ja-JP` qua `speechSynthesis` |
 | 💾 Local Storage | Tự lưu/đọc tiến trình; **migrate v2 → v3** + giữ tiến trình khi đổi cơ chế khóa |
@@ -92,6 +92,10 @@ huyền thoại** để mở vùng mới. Dữ liệu hình ảnh, tên, chỉ s
 - **Dynamax** (Battle thường, 5%): đối thủ phóng to 1.3×, hào quang đỏ tía, HP & Attack ×2, thắng +300 🍬.
 - **Tiếng kêu Pokémon** (cries) khi xuất hiện + **TTS giọng ja-JP** (Kyoko/Otoya/Google) đọc tên — 2 kênh riêng, không đụng nhau.
   (Cries là `.ogg` — Safari/iOS có thể không phát; khi đó tự bỏ qua êm, TTS vẫn đọc tên bình thường.)
+- **Audio Manager chuẩn hóa** (`js/audio.js`): âm lượng cố định `DEFAULT_BGM_VOLUME=0.3` / `DEFAULT_SFX_VOLUME=0.5`.
+  - **SFX đòn đánh** tổng hợp WebAudio theo hệ (điện/lửa/nước/va chạm) — phát tức thì, đồng bộ với VFX nhấp nháy.
+  - **BGM chiptune loop** cho Battle & Boss (`bgmStart`/`bgmStop`); tự dừng khi もどる hoặc trận kết thúc.
+  - Mọi `.play()` đều bọc `.catch()` (chống Safari/Chrome chặn autoplay). Âm thanh tổng hợp nên không cần file ngoài, không lệ thuộc mạng.
 
 ---
 

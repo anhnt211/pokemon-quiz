@@ -21,6 +21,11 @@ photoLaunch.addEventListener("click", enterPhoto);
 photoBackBtn.addEventListener("click", goHome);
 camBtn.addEventListener("click", capturePhoto);
 photoChangeBtn.addEventListener("click", backToPhotoChooser);
+// Album + Lightbox
+albumBtn.addEventListener("click", openAlbum);
+albumCloseBtn.addEventListener("click", closeAlbum);
+lightboxClose.addEventListener("click", closeLightbox);
+lightbox.addEventListener("click", (e) => { if (e.target === lightbox || e.target === lightboxImg) closeLightbox(); });
 dexOpenBtn.addEventListener("click", () => { dexOverlay.classList.contains("open") ? closePokedex() : openPokedex(); });
 dexCloseBtn.addEventListener("click", closePokedex);
 dexOverlay.addEventListener("click", (e) => { if (e.target === dexOverlay) closePokedex(); });
