@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ポケクイズ" />
   <meta name="theme-color" content="#3b4cca" />
-  <title>ポケモン クイズ</title>
+  <title>ポケモン クイズ | だれだ？このポケモン</title>
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json" />
@@ -20,57 +20,58 @@
 
   <!-- ============ HOME ============ -->
   <div class="screen" id="home-screen">
-    <div class="home-inner">
-      <div class="home-logo">
-        <h1>ポケモン クイズ</h1>
-      </div>
+    <div class="home-inner home-bg">
+      <!-- Cụm menu kính mờ đẩy xuống vùng cỏ; nửa trên để lộ nhân vật -->
+      <div class="home-menu">
+        <div class="home-logo"><h1>ポケモン クイズ</h1></div>
 
-      <!-- Trainer Card -->
-      <div class="trainer-card">
-        <div class="trainer-top">
-          <div class="trainer-rank"><small>トレーナーランク</small><span id="trainer-rank">ルーキートレーナー</span></div>
-          <div class="trainer-candy">🍬 <span id="home-candy">0</span></div>
+        <!-- Trainer Card -->
+        <div class="trainer-card">
+          <div class="trainer-top">
+            <div class="trainer-rank"><small>トレーナーランク</small><span id="trainer-rank">ルーキートレーナー</span></div>
+            <div class="trainer-candy">🍬 <span id="home-candy">0</span></div>
+          </div>
+          <div class="trainer-stats">
+            <span>📕 ずかん: <b id="stat-caught">0</b></span>
+            <span>✨ シャイニー: <b id="stat-shiny">0</b></span>
+            <span>⭐ スコア: <b id="home-score">0</b></span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>ずかん かんせいど</span><span id="progress-pct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          </div>
         </div>
-        <div class="trainer-stats">
-          <span>📕 ずかん: <b id="stat-caught">0</b></span>
-          <span>✨ シャイニー: <b id="stat-shiny">0</b></span>
-          <span>⭐ スコア: <b id="home-score">0</b></span>
-        </div>
-        <div class="progress-wrap">
-          <div class="progress-label"><span>ずかん かんせいど</span><span id="progress-pct">0%</span></div>
-          <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-        </div>
-      </div>
 
-      <!-- 3 nút điều hướng chính -->
-      <button class="menu-btn quiz-launch" id="quiz-launch">
-        <span class="btn-row">
-          <svg class="btn-ico" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2.5l1.9 5.1 5.1 1.9-5.1 1.9L12 16.5l-1.9-5.1L5 9.5l5.1-1.9L12 2.5z"/><circle cx="18.7" cy="17.6" r="1.5"/><circle cx="6" cy="16.6" r="1.1"/></svg>
-          <span class="btn-title">スーパークイズ</span>
-        </span>
-        <small>タイプ・しんか・おもさ クイズ！</small>
-      </button>
-      <button class="menu-btn get-launch" id="get-launch">
-        <span class="btn-row">
-          <svg class="btn-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M3 12h6m6 0h6" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="3.3" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12" r="1.2" fill="#fff"/></svg>
-          <span class="btn-title">ポケモンGET</span>
-        </span>
-        <small>ちほうを ぼうけんして ゲット！</small>
-      </button>
-      <button class="menu-btn battle-launch" id="battle-launch">
-        <span class="btn-row">
-          <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l11 11"/><path d="M19 5L8 16"/><path d="M3.5 18.5l3 3"/><path d="M20.5 18.5l-3 3"/></svg>
-          <span class="btn-title">ポケモンバトル</span>
-        </span>
-        <small>つかまえた ポケモンで しょうぶ！</small>
-      </button>
-      <button class="menu-btn photo-launch" id="photo-launch">
-        <span class="btn-row">
-          <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.6"/><path d="M8.5 7l1.2-2.2a1 1 0 0 1 .9-.5h2.8a1 1 0 0 1 .9.5L15.5 7"/><circle cx="12" cy="13.5" r="3.2"/></svg>
-          <span class="btn-title">フォトスタジオ</span>
-        </span>
-        <small>すきな ばしょで しゃしんを とろう！</small>
-      </button>
+        <!-- 4 nút điều hướng (kính mờ, viền/chữ/icon theo màu đặc trưng) -->
+        <button class="menu-btn quiz-launch" id="quiz-launch">
+          <span class="btn-row">
+            <svg class="btn-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l1.9 5.1 5.1 1.9-5.1 1.9L12 16.5l-1.9-5.1L5 9.5l5.1-1.9L12 2.5z"/><circle cx="18.7" cy="17.6" r="1.5"/><circle cx="6" cy="16.6" r="1.1"/></svg>
+            <span class="btn-title">スーパークイズ</span>
+          </span>
+          <small>タイプ・しんか・おもさ クイズ！</small>
+        </button>
+        <button class="menu-btn get-launch" id="get-launch">
+          <span class="btn-row">
+            <svg class="btn-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M3 12h6m6 0h6" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.3" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+            <span class="btn-title">ポケモンGET</span>
+          </span>
+          <small>ちほうを ぼうけんして ゲット！</small>
+        </button>
+        <button class="menu-btn battle-launch" id="battle-launch">
+          <span class="btn-row">
+            <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5l11 11"/><path d="M19 5L8 16"/><path d="M3.5 18.5l3 3"/><path d="M20.5 18.5l-3 3"/></svg>
+            <span class="btn-title">ポケモンバトル</span>
+          </span>
+          <small>つかまえた ポケモンで しょうぶ！</small>
+        </button>
+        <button class="menu-btn photo-launch" id="photo-launch">
+          <span class="btn-row">
+            <svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.6"/><path d="M8.5 7l1.2-2.2a1 1 0 0 1 .9-.5h2.8a1 1 0 0 1 .9.5L15.5 7"/><circle cx="12" cy="13.5" r="3.2"/></svg>
+            <span class="btn-title">フォトスタジオ</span>
+          </span>
+          <small>すきな ばしょで しゃしんを とろう！</small>
+        </button>
+      </div>
     </div>
   </div>
 

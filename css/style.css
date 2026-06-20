@@ -345,10 +345,53 @@ body {
 .dex-cell.locked .dex-name { color:#999; }
 
 /* =====================================================================
-   MÀN MAIN — nền sạch, dịu mắt (bỏ ảnh nền AI cho thoáng, chuyên nghiệp)
+   MÀN MAIN — ảnh nền nhân vật + cụm menu KÍNH MỜ đẩy xuống vùng cỏ
    ===================================================================== */
-#home-screen .home-inner { background:var(--card-bg); }
-#home-screen .home-logo h1 { text-shadow:none; }
+#home-screen .home-inner {
+  /* Đường dẫn TƯƠNG ĐỐI (từ css/style.css) -> chạy đúng trên GitHub Pages, KHÔNG '/' đầu */
+  background-image: url('../img/main-bg.jpg');
+  background-size: cover;
+  background-position: center top;   /* giữ phần đỉnh có nhân vật + Pokéball */
+  background-repeat: no-repeat;
+  padding: 14px 12px;
+}
+#home-screen .home-logo { text-align:center; margin-bottom:4px; }
+#home-screen .home-logo h1 {
+  font-size:1.3rem; color:#fff; letter-spacing:1px;
+  text-shadow:0 2px 6px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Cụm menu hẹp, nằm giữa, sát ĐÁY -> nửa trên lộ nhân vật, hai rìa lộ phong cảnh */
+.home-menu {
+  width:88%; max-width:400px; margin:0 auto; margin-top:auto;
+  display:flex; flex-direction:column; gap:10px; padding-bottom:30px;
+}
+
+/* Nút KÍNH MỜ (glassmorphism) */
+.home-menu .menu-btn {
+  background: rgba(255,255,255,0.25);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  border-radius:16px;
+}
+.home-menu .menu-btn:active { transform:scale(0.98); }
+.home-menu .menu-btn .btn-title { text-shadow:0 1px 2px rgba(255,255,255,0.55); }
+.home-menu .menu-btn small { color:#2d3748; opacity:0.78; font-weight:700; }
+/* Màu đặc trưng -> viền + chữ/icon (icon dùng currentColor) */
+.home-menu .quiz-launch   { color:#9f7aea; border-color:rgba(159,122,234,0.7); }
+.home-menu .get-launch    { color:#48bb78; border-color:rgba(72,187,120,0.7); }
+.home-menu .battle-launch { color:#f56565; border-color:rgba(245,101,101,0.7); }
+.home-menu .photo-launch  { color:#4299e1; border-color:rgba(66,153,225,0.7); }
+
+/* Trainer Card KÍNH MỜ navy */
+.home-menu .trainer-card {
+  background: rgba(42,67,101,0.42);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  color:#fff;
+}
 
 /* =====================================================================
    MÀN ポケモンGET — BẢN ĐỒ NỀN + MỐC ĐÁNH DẤU
