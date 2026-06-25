@@ -38,6 +38,14 @@
         <span id="stat-caught" hidden></span>   <!-- giữ cho JS, không hiển thị -->
       </div>
 
+      <!-- Icon nuôi thú: dưới Trainer Card, căn phải -->
+      <div class="pet-shortcut">
+        <button class="pet-icon-btn" id="pet-launch" aria-label="ポケモンそだて">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="6" cy="11" r="2.1"/><circle cx="9.8" cy="7" r="2.1"/><circle cx="14.2" cy="7" r="2.1"/><circle cx="18" cy="11" r="2.1"/><path d="M12 12.4c-2.7 0-5 1.9-5 4.1 0 1.5 1.2 2.4 2.7 2.4.9 0 1.6-.45 2.3-.45s1.4.45 2.3.45c1.5 0 2.7-.9 2.7-2.4 0-2.2-2.3-4.1-5-4.1z"/></svg>
+          <span class="pet-icon-label">そだてる</span>
+        </button>
+      </div>
+
       <!-- Lưới 2x2 nút kính mờ, sát đáy (vùng cỏ) -->
       <div class="home-menu">
         <button class="menu-btn puzzle-launch" id="puzzle-launch">
@@ -133,7 +141,7 @@
         <h2 class="get-title">⚔️ ポケモンバトル</h2>
       </div>
 
-      <!-- Bước 1: chọn quân -->
+      <!-- Bước 1: chọn quân (thường được bỏ qua — vào trận bằng 相棒) -->
       <div id="battle-choose">
         <div class="section-label">あいぼうを えらんでね！</div>
         <div class="choose-grid" id="choose-grid"></div>
@@ -237,6 +245,50 @@
     </div>
   </div>
 
+  <!-- ============ 🐾 ポケモンそだて (Nuôi Bạn Đồng Hành) ============ -->
+  <div class="screen" id="pet-screen" style="display:none;">
+    <div class="home-inner">
+      <div class="get-header">
+        <button class="back-btn-dark" id="pet-back-btn">← もどる</button>
+        <h2 class="get-title">🐾 そだてる</h2>
+      </div>
+
+      <!-- Bước 1: chọn Pokémon (đổi con để nuôi) -->
+      <div id="pet-choose">
+        <div class="section-label">そだてる ポケモンを えらんでね！</div>
+        <div class="choose-grid" id="pet-choose-grid"></div>
+      </div>
+
+      <!-- Bước 2: nuôi -->
+      <div id="pet-view" style="display:none;">
+        <div class="pet-stage">
+          <img class="pet-img" id="pet-img" src="" alt="">
+        </div>
+        <div class="pet-name" id="pet-name">？？？</div>
+        <div class="pet-grow">
+          <div class="pet-grow-label"><span>🐣</span><span id="pet-grow-pct">進化まで: 0 / 100 🍬</span></div>
+          <div class="pet-grow-bar"><div class="pet-grow-fill" id="pet-grow-fill" style="width:0%"></div></div>
+        </div>
+        <p class="pet-hint" id="pet-hint">おやつを あげて しんかを めざそう！</p>
+        <button class="menu-btn pet-feed" id="pet-feed">🍬 おやつを あげる（1）</button>
+        <button class="menu-btn pet-evolve" id="pet-evolve" style="display:none;">⚡ 進化する！</button>
+        <button class="back-btn-dark" id="pet-change">↺ べつの ポケモン</button>
+        <div class="pet-candy">もっている キャンディ: 🍬 <b id="pet-candy">0</b></div>
+      </div>
+    </div>
+
+    <!-- Bảng tiến hóa -->
+    <div class="battle-result" id="pet-result">
+      <div class="result-box">
+        <div class="result-text" id="pet-result-text"></div>
+        <div class="result-actions">
+          <button class="menu-btn" id="pet-continue">つづける ✨</button>
+          <button class="menu-btn battle-home" id="pet-home">ホームへ 🏠</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Popups -->
   <div class="catch-popup" id="catch-popup"><div class="bubble" id="catch-bubble">🎉 やったね！<span class="big" id="catch-popup-text">◯◯</span></div></div>
   <div class="oak-popup" id="oak-popup">よくやった！ オーキド博士から ごほうびだ！<br><span class="candy">🍬 +50</span></div>
@@ -271,6 +323,7 @@
   <script src="./js/game.js"></script>
   <script src="./js/puzzle.js"></script>
   <script src="./js/battle.js"></script>
+  <script src="./js/pet.js"></script>
   <script src="./js/photo.js"></script>
   <script src="./js/main.js"></script>
 </body>

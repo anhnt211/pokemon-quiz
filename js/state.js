@@ -17,6 +17,14 @@ function normalizeState() {
   gameState.missions     = gameState.missions || null;
   if (!gameState.bossDefeated || typeof gameState.bossDefeated !== "object") gameState.bossDefeated = {};
 
+  // 🐾 そだてる: tiến trình kẹo từng con + Bạn Đồng Hành hiện tại
+  if (!gameState.growth || typeof gameState.growth !== "object") gameState.growth = {};
+  if (typeof gameState.currentBuddyID === "undefined") gameState.currentBuddyID = null;
+  // Bạn Đồng Hành phải là Pokémon đã sở hữu — nếu không, bỏ chọn
+  if (gameState.currentBuddyID !== null && !gameState.pokedex.includes(gameState.currentBuddyID)) {
+    gameState.currentBuddyID = null;
+  }
+
   // MIGRATE: bé nào trước đây đã mở vùng kế theo luật cũ (>=50 con ở vùng yêu cầu)
   // -> đánh dấu boss vùng đó đã hạ, để KHÔNG bị tụt tiến trình khi đổi sang khóa-bằng-boss.
   REGIONS.forEach(r => {
@@ -32,6 +40,20 @@ function normalizeState() {
   if (!Array.isArray(gameState.seenUnlocked)) {
     gameState.seenUnlocked = REGIONS.filter(r => isRegionUnlocked(r)).map(r => r.key);
   }
+}
+
+/* ===== 🐾 BẠN ĐỒNG HÀNH (Buddy) ===== */
+/* Chọn Bạn Đồng Hành (lưu vào LocalStorage). Mỗi thời điểm chỉ có 1 con. */
+function setBuddy(id) {
+  gameState.currentBuddyID = id;
+  saveGame();
+}
+/* ID Bạn Đồng Hành hợp lệ; nếu chưa chọn -> con ĐẦU TIÊN trong danh sách sở hữu */
+function getBuddyID() {
+  if (gameState.currentBuddyID && gameState.pokedex.includes(gameState.currentBuddyID)) {
+    return gameState.currentBuddyID;
+  }
+  return gameState.pokedex.length ? gameState.pokedex[0] : null;
 }
 
 /* Phát hiện vùng VỪA mở khóa (chưa từng thấy) -> trả danh sách để ăn mừng */
@@ -179,6 +201,7 @@ function getTrainerRank(total) {
 function updateCandyDisplays() {
   const c = gameState.candy || 0;
   if (homeCandy) homeCandy.textContent = c;
+  if (typeof petCandyEl !== "undefined" && petCandyEl) petCandyEl.textContent = c;   // màn そだてる
 }
 function renderTrainerCard() {
   const total = gameState.pokedex.length + gameState.shinyPokedex.length;

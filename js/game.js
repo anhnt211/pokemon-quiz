@@ -103,6 +103,7 @@ function showScreen(name) {
   puzzleScreen.style.display = name === "puzzle" ? "block" : "none";
   battleScreen.style.display = name === "battle" ? "block" : "none";
   photoScreen.style.display  = name === "photo"  ? "block" : "none";
+  if (typeof petScreen !== "undefined" && petScreen) petScreen.style.display = name === "pet" ? "block" : "none";
 }
 
 /* Dọn dẹp khi rời màn chơi/quiz */
@@ -252,14 +253,15 @@ function checkAnswer(selectedName, buttonElement) {
   });
 }
 
-/* ===== POKÉDEX (theo vùng đang chơi, đánh dấu Shiny) ===== */
+/* ===== POKÉDEX (theo vùng đang chơi, đánh dấu Shiny + chọn 相棒) ===== */
 function renderPokedex() {
   const frag = document.createDocumentFragment();
   allPokemon.forEach(p => {
     const caught = gameState.pokedex.includes(p.id);
     const isShiny = gameState.shinyPokedex.includes(p.id);
+    const isBuddy = caught && gameState.currentBuddyID === p.id;
     const cell = document.createElement("div");
-    cell.className = "dex-cell " + (caught ? "caught" : "locked") + (isShiny ? " shiny" : "");
+    cell.className = "dex-cell " + (caught ? "caught" : "locked") + (isShiny ? " shiny" : "") + (isBuddy ? " buddy" : "");
     if (caught) {
       if (isShiny) { const star = document.createElement("div"); star.className = "shiny-star"; star.textContent = "✨"; cell.appendChild(star); }
       const img = document.createElement("img");
@@ -272,6 +274,21 @@ function renderPokedex() {
     const idEl = document.createElement("div"); idEl.className = "dex-id"; idEl.textContent = "No." + pad(p.id);
     const nameEl = document.createElement("div"); nameEl.className = "dex-name"; nameEl.textContent = caught ? p.name : "？？？？？";
     cell.appendChild(idEl); cell.appendChild(nameEl);
+
+    // 🐾 Nút "相棒にする" — chỉ cho Pokémon ĐÃ SỞ HỮU
+    if (caught) {
+      const buddyBtn = document.createElement("button");
+      buddyBtn.type = "button";
+      buddyBtn.className = "dex-buddy-btn" + (isBuddy ? " active" : "");
+      buddyBtn.textContent = isBuddy ? "🐾 相棒" : "相棒にする";
+      buddyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setBuddy(p.id);     // lưu currentBuddyID vào LocalStorage (chỉ 1 con)
+        renderPokedex();    // vẽ lại để cập nhật huy hiệu 相棒
+      });
+      cell.appendChild(buddyBtn);
+    }
+
     frag.appendChild(cell);
   });
   dexGrid.innerHTML = ""; dexGrid.appendChild(frag); dexGrid.scrollTop = 0;

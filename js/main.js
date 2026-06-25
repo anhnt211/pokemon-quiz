@@ -20,6 +20,20 @@ battleStartBtn.addEventListener("click", startBattle);
 zmoveBtn.addEventListener("click", activateZMove);
 battleBackBtn.addEventListener("click", () => { stopBattle(); goHome(); });
 
+// 🐾 ポケモンそだて (Pet / nuôi Bạn Đồng Hành)
+// Bọc guard: nếu dom.js cũ (thiếu pet refs) thì bỏ qua, không làm crash cả game.
+if (typeof petLaunch !== "undefined" && petLaunch) {
+  petLaunch.addEventListener("click", enterPet);
+  petBackBtn.addEventListener("click", goHome);
+  petFeedBtn.addEventListener("click", feedPet);
+  petEvolveBtn.addEventListener("click", evolvePet);
+  petChangeBtn.addEventListener("click", backToPetChooser);
+  petContinueBtn.addEventListener("click", petContinue);
+  petHomeBtn.addEventListener("click", goHome);
+} else {
+  console.warn("⚠️ Thiếu tham chiếu DOM của そだてる — hãy cập nhật js/dom.js (và xóa cache PWA).");
+}
+
 // Photo Studio
 photoLaunch.addEventListener("click", enterPhoto);
 photoBackBtn.addEventListener("click", goHome);

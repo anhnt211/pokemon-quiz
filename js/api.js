@@ -52,3 +52,63 @@ async function getJapaneseName(id) {
   const ja = sp.names.find(n => n.language.name === "ja-Hrkt") || sp.names.find(n => n.language.name === "ja");
   return ja ? ja.name : ("No." + pad(id));
 }
+
+/* =====================================================================
+   CHUỖI TIẾN HÓA (evolution chain) — cho 🐾 そだてる & hệ số sức mạnh Battle
+   Lấy: /pokemon-species/{id} -> evolution_chain.url -> duyệt chuỗi.
+   Trả về mảng các "đời" theo nhánh chính: [{ id, stage, nextId }]
+   (stage bắt đầu từ 1 = dạng cơ bản). Với 1->2->3 sẽ là stage 1,2,3.
+   ===================================================================== */
+let evoChainCache = {};   // cache theo URL evolution_chain
+
+function speciesIdFromUrl(url) {
+  const m = (url || "").match(/\/pokemon-species\/(\d+)\/?$/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+async function getEvolutionChain(id) {
+  const sp = await getSpecies(id);
+  const url = sp.evolution_chain && sp.evolution_chain.url;
+  if (!url) return null;
+  if (evoChainCache[url]) return evoChainCache[url];
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("evo " + id);
+  const data = await res.json();
+
+  // Duyệt theo NHÁNH ĐẦU TIÊN (phù hợp các chuỗi tuyến tính 1->2->3).
+  const list = [];
+  let node = data.chain;
+  let stage = 1;
+  while (node) {
+    const sid = speciesIdFromUrl(node.species && node.species.url);
+    const next = (node.evolves_to && node.evolves_to.length) ? node.evolves_to[0] : null;
+    const nextId = next ? speciesIdFromUrl(next.species && next.species.url) : null;
+    if (sid) list.push({ id: sid, stage, nextId });
+    node = next;
+    stage++;
+  }
+  evoChainCache[url] = list;
+  return list;
+}
+
+/* Đời tiến hóa KẾ TIẾP của 1 Pokémon (theo nhánh chính). null nếu là dạng cuối. */
+async function getNextEvolution(id) {
+  const list = await getEvolutionChain(id);
+  if (!list) return null;
+  const me = list.find(x => x.id === id);
+  if (!me || !me.nextId) return null;
+  return { id: me.nextId };
+}
+
+/* Cấp tiến hóa của 1 Pokémon: { stage, total, isFinal }
+   stage 1 = cơ bản, 2, 3...; isFinal = true nếu không còn tiến hóa nữa. */
+async function getEvolutionStage(id) {
+  let list = null;
+  try { list = await getEvolutionChain(id); } catch (e) { list = null; }
+  if (!list || !list.length) return { stage: 1, total: 1, isFinal: true };
+  const me = list.find(x => x.id === id);
+  const stage = me ? me.stage : 1;
+  const isFinal = !me || !me.nextId;
+  return { stage, total: list.length, isFinal };
+}

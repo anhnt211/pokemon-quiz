@@ -1,6 +1,7 @@
 "use strict";
 /* =====================================================================
-   BATTLE — ポケモンバトル: chọn quân, đấu turn-based, khắc hệ, animation
+   BATTLE — ポケモンバトル: BẮT BUỘC dùng Bạn Đồng Hành (相棒),
+   sát thương theo cấp tiến hóa, đấu turn-based, khắc hệ, animation
    ===================================================================== */
 
 /* Khắc hệ cơ bản (atk -> các hệ bị khắc) */
@@ -22,14 +23,22 @@ async function getFighter(id) {
   if (!res.ok) throw new Error("fighter " + id);
   const d = await res.json();
   const stat = n => { const s = d.stats.find(x => x.stat.name === n); return s ? s.base_stat : 50; };
-  const name = await getJapaneseName(id);          // dùng lại helper ở quiz.js
+  const name = await getJapaneseName(id);          // dùng lại helper ở api.js
   const maxHp = Math.round(stat("hp") * 2 + 20);   // nhân đôi + đệm để đấu được nhiều lượt
   return {
     id, name, image: artworkUrl(id),
     types: d.types.map(t => t.type.name),
     maxHp, hp: maxHp,
-    atk: stat("attack"), def: stat("defense"), spd: stat("speed")
+    atk: stat("attack"), def: stat("defense"), spd: stat("speed"),
+    dmgMult: 1, stage: 1, sparkle: false    // hệ số sức mạnh theo cấp tiến hóa (gán sau)
   };
+}
+
+/* Hệ số sát thương theo cấp tiến hóa: 1->x1, 2->x1.5, 3(trở lên)->x2.2 */
+function dmgMultForStage(stage) {
+  if (stage >= 3) return 2.2;
+  if (stage === 2) return 1.5;
+  return 1;
 }
 
 /* ===== Vào màn Battle thường ===== */
@@ -41,10 +50,8 @@ function enterBattle() {
   zmoveBtn.style.display = "none";
   showScreen("battle");
   battleResult.classList.remove("show");
-  battleArena.style.display = "none";
-  battleChoose.style.display = "block";
-  renderChooser();
   bgmStart("battle");      // nhạc nền trận đấu
+  startBuddyBattle();      // BẮT BUỘC ra trận bằng Bạn Đồng Hành
 }
 
 /* ===== Vào màn đấu BOSS ===== */
@@ -57,10 +64,26 @@ function enterBossBattle(region) {
   zmoveBtn.style.display = "none";
   showScreen("battle");
   battleResult.classList.remove("show");
-  battleArena.style.display = "none";
-  battleChoose.style.display = "block";
-  renderChooser();
   bgmStart("boss");        // nhạc nền Boss (kịch tính hơn)
+  startBuddyBattle();      // BẮT BUỘC ra trận bằng Bạn Đồng Hành
+}
+
+/* BẮT BUỘC dùng Bạn Đồng Hành; chưa chọn -> con ĐẦU TIÊN trong danh sách sở hữu.
+   Bỏ qua bước chọn quân — vào thẳng sàn đấu. */
+function startBuddyBattle() {
+  const buddy = (typeof getBuddyID === "function")
+    ? getBuddyID()
+    : (gameState.pokedex.length ? gameState.pokedex[0] : null);
+
+  if (!buddy) {
+    // Chưa có Pokémon nào -> báo trong khung chọn quân
+    battleArena.style.display = "none";
+    battleChoose.style.display = "block";
+    chooseGrid.innerHTML = '<p class="choose-empty">まだ ポケモンを つかまえていないよ！<br>「ポケモンGET」で つかまえてから きてね。</p>';
+    return;
+  }
+  battleChoose.style.display = "none";
+  chooseMyPokemon(buddy);
 }
 
 function stopBattle() {
@@ -70,7 +93,7 @@ function stopBattle() {
   bgmStop();              // dừng nhạc nền trận đấu ngay
 }
 
-/* ===== Bước 1: chọn quân từ pokedex (đã bắt) ===== */
+/* (Giữ lại để tương thích — không còn dùng cho luồng vào trận mặc định) */
 function renderChooser() {
   chooseGrid.innerHTML = "";
   const caught = gameState.pokedex.slice().sort((a, b) => a - b);
@@ -101,7 +124,7 @@ function pickOpponent(myId) {
   return r;
 }
 
-/* ===== Bước 2: chuẩn bị sàn đấu ===== */
+/* ===== Bước 2: chuẩn bị sàn đấu (id = Bạn Đồng Hành) ===== */
 async function chooseMyPokemon(id) {
   const myToken = ++battleToken;
   battleOver = false;
@@ -117,8 +140,19 @@ async function chooseMyPokemon(id) {
 
   const oppId = bossMode ? bossRegion.boss.id : pickOpponent(id);
   try {
-    const [mine, foe] = await Promise.all([getFighter(id), getFighter(oppId)]);
+    const [mine, foe, stageInfo] = await Promise.all([
+      getFighter(id),
+      getFighter(oppId),
+      getEvolutionStage(id).catch(() => null)     // cấp tiến hóa của 相棒
+    ]);
     if (myToken !== battleToken) return;
+
+    // Hệ số sức mạnh theo cấp tiến hóa của Bạn Đồng Hành
+    const stage = stageInfo ? stageInfo.stage : 1;
+    mine.stage = stage;
+    mine.dmgMult = dmgMultForStage(stage);
+    mine.sparkle = stage >= 3;                     // dạng cuối: ra đòn lấp lánh hơn
+
     if (bossMode) {                          // Boss: HP gốc ×1.5
       foe.maxHp = Math.round(foe.maxHp * BOSS_HP_MULT);
       foe.hp = foe.maxHp;
@@ -134,7 +168,8 @@ async function chooseMyPokemon(id) {
     if (bossMode) log(`でた〜！ でんせつの ${foe.name}！`);
     else if (foeDynamax) log(`おや…！？ ${foe.name} が ダイマックスした！`);
     else log(`${foe.name} が あらわれた！`);
-    log(`いけ！ ${mine.name}！`);
+    log(`いけ！ あいぼうの ${mine.name}！`);
+    if (mine.stage >= 2) log(`${mine.name} は しんかして つよい！（こうげき ×${mine.dmgMult}）`);
     playCry(oppId);                          // tiếng kêu đối thủ khi xuất hiện
     battleStartBtn.disabled = false;
   } catch (e) {
@@ -146,8 +181,8 @@ async function chooseMyPokemon(id) {
 function renderFighters() {
   myImg.src = myFighter.image;  myImg.alt = myFighter.name;  myName.textContent = myFighter.name;
   foeImg.src = foeFighter.image; foeImg.alt = foeFighter.name; foeName.textContent = foeFighter.name;
-  mySide.classList.remove("fainted", "attack-up", "hit");
-  foeSide.classList.remove("fainted", "attack-down", "hit");
+  mySide.classList.remove("fainted", "attack-up", "hit", "crit-glow");
+  foeSide.classList.remove("fainted", "attack-down", "hit", "crit-glow");
   updateHp();
 }
 function setHp(el, f) {
@@ -170,6 +205,7 @@ function startBattle() {
   if (!myFighter || !foeFighter || battleOver) return;
   battleStartBtn.disabled = true;
   battleStartBtn.style.display = "none";
+  if (bossMode && !zUsed) zmoveBtn.style.display = "";   // Z-Move sẵn sàng suốt trận Boss
   // Con nhanh hơn đánh trước
   battleOrder = (myFighter.spd >= foeFighter.spd)
     ? [["mine", "foe"], ["foe", "mine"]]
@@ -205,6 +241,9 @@ function performAttack(atkSide, defSide) {
   let dmg = Math.max(1, atk.atk - def.def);
   const superEff = atk.types.some(t => (SUPER_EFF[t] || []).some(x => def.types.includes(x)));
   if (superEff) dmg = Math.round(dmg * 2);
+  // Hệ số sức mạnh theo cấp tiến hóa (chỉ áp dụng cho đòn của Bạn Đồng Hành)
+  if (atkSide === "mine" && atk.dmgMult && atk.dmgMult !== 1) dmg = Math.round(dmg * atk.dmgMult);
+  dmg = Math.max(1, dmg);
 
   // Animation: người công lao lên
   atkEl.classList.add(atkSide === "mine" ? "attack-up" : "attack-down");
@@ -220,10 +259,33 @@ function performAttack(atkSide, defSide) {
     flashType(atkType);
     playSkillVFX(atkType);                 // VFX toàn màn (điện/lửa/nước)
     playSfx(atkType);                      // SFX đồng bộ NGAY lúc nhấp nháy
+    // ✨ Đòn của Pokémon dạng cuối (x2.2): lấp lánh hơn
+    if (atkSide === "mine" && atk.sparkle) {
+      defEl.classList.add("crit-glow");
+      sparkleHit(defEl);
+      setTimeout(() => defEl.classList.remove("crit-glow"), 620);
+    }
     setTimeout(() => defEl.classList.remove("hit"), 460);
     if (superEff) log("こうかは ばつぐんだ！");
     if (def.hp <= 0) defEl.classList.add("fainted");
   }, 360);
+}
+
+/* Lấp lánh thêm khi Pokémon dạng cuối ra đòn */
+function sparkleHit(targetEl) {
+  const emojis = ["✨", "💫", "⭐", "🌟"];
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement("span");
+    s.className = "sparkle";
+    s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const angle = (Math.PI * 2 * i) / 10 + Math.random() * 0.4;
+    const dist = 45 + Math.random() * 45;
+    s.style.setProperty("--tx", `${Math.cos(angle) * dist}px`);
+    s.style.setProperty("--ty", `${Math.sin(angle) * dist}px`);
+    s.style.animationDelay = `${Math.random() * 0.12}s`;
+    targetEl.appendChild(s);
+    setTimeout(() => s.remove(), 1200);
+  }
 }
 
 function flashType(type) {

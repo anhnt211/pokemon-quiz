@@ -113,3 +113,24 @@ const albumCloseBtn   = document.getElementById("album-close-btn");
 const lightbox        = document.getElementById("lightbox");
 const lightboxImg     = document.getElementById("lightbox-img");
 const lightboxClose   = document.getElementById("lightbox-close");
+
+// 🐾 ポケモンそだて (Pet / nuôi Bạn Đồng Hành)
+const petScreen      = document.getElementById("pet-screen");
+const petLaunch      = document.getElementById("pet-launch");
+const petBackBtn     = document.getElementById("pet-back-btn");
+const petChoose      = document.getElementById("pet-choose");
+const petChooseGrid  = document.getElementById("pet-choose-grid");
+const petView        = document.getElementById("pet-view");
+const petImg         = document.getElementById("pet-img");
+const petNameEl      = document.getElementById("pet-name");
+const petGrowFill    = document.getElementById("pet-grow-fill");
+const petGrowPct     = document.getElementById("pet-grow-pct");
+const petHintEl      = document.getElementById("pet-hint");
+const petFeedBtn     = document.getElementById("pet-feed");
+const petEvolveBtn   = document.getElementById("pet-evolve");
+const petChangeBtn   = document.getElementById("pet-change");
+const petCandyEl     = document.getElementById("pet-candy");
+const petResult      = document.getElementById("pet-result");
+const petResultText  = document.getElementById("pet-result-text");
+const petContinueBtn = document.getElementById("pet-continue");
+const petHomeBtn     = document.getElementById("pet-home");

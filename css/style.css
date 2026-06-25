@@ -800,3 +800,100 @@ body {
 /* Dòng tên to + dòng phụ trong bảng kết quả (dùng chung battle-result) */
 .result-text .big { display:block; font-size:1.7rem; margin:6px 0 2px; color:var(--poke-blue-dark); }
 .result-text .result-sub { display:block; font-size:0.9rem; font-weight:800; color:#2f9e5e; margin-top:4px; }
+
+/* =====================================================================
+   NUÔI POKÉMON — nút icon + màn ポケモンそだて
+   ===================================================================== */
+/* Icon nuôi thú — nút HỒNG ĐẶC nổi rõ, dưới Trainer Card, căn phải */
+.pet-shortcut { display:flex; justify-content:flex-end; margin-top:0; }
+.pet-icon-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  background:#ed64a6; border:2px solid #fff; border-radius:999px; padding:7px 15px 7px 11px;
+  color:#fff; cursor:pointer; font-family:inherit;
+  box-shadow:0 4px 12px rgba(214,51,132,0.5); transition:all 0.2s ease;
+}
+.pet-icon-btn:active { transform:scale(0.95); }
+.pet-icon-btn svg { width:22px; height:22px; flex-shrink:0; fill:#fff; }
+.pet-icon-label { font-size:0.82rem; font-weight:900; color:#fff; letter-spacing:0.3px; }
+
+/* Màn nuôi */
+.pet-stage {
+  width:100%; max-width:230px; margin:4px auto 0; aspect-ratio:1/1; min-height:170px; max-height:34vh;
+  border-radius:18px; background:radial-gradient(circle at center,#fff5fb 0%,#ffe3f1 100%);
+  display:flex; align-items:center; justify-content:center; overflow:visible;
+}
+.pet-img { width:100%; height:100%; max-width:190px; object-fit:contain; filter:drop-shadow(0 6px 8px rgba(0,0,0,0.22)); }
+.pet-img.fed { animation:petFed 0.4s ease; }
+@keyframes petFed { 0%,100%{ transform:translateY(0) scale(1);} 40%{ transform:translateY(-10px) scale(1.06);} }
+.pet-img.evolving { animation:petEvolve 1s ease; }
+@keyframes petEvolve {
+  0%{ filter:brightness(1); }
+  30%{ filter:brightness(3) saturate(0); transform:scale(1.08); }
+  60%{ filter:brightness(4) saturate(0); transform:scale(0.96); }
+  100%{ filter:brightness(1); transform:scale(1); }
+}
+.pet-name { text-align:center; font-size:1.15rem; font-weight:900; color:var(--poke-blue-dark); margin-top:6px; }
+.pet-grow { max-width:300px; margin:8px auto 0; }
+.pet-grow-label { display:flex; justify-content:space-between; font-size:0.72rem; font-weight:800; color:var(--ink-soft); margin-bottom:4px; }
+.pet-grow-bar { height:16px; background:#e7eaf1; border-radius:999px; overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,0.12); }
+.pet-grow-fill { height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,#f6ad55,#ed64a6); transition:width 0.4s ease; }
+.pet-hint { text-align:center; font-size:0.82rem; font-weight:700; color:var(--ink-soft); margin:8px 0; }
+.pet-feed { max-width:300px; margin:0 auto; background:#ed8936; }
+.pet-feed:disabled { background:#cbd5e0; }
+#pet-view .back-btn-dark { display:block; margin:10px auto 0; }
+.pet-candy { text-align:center; font-size:0.82rem; font-weight:800; color:var(--poke-blue-dark); margin-top:10px; }
+
+/* =====================================================================
+   ⬆️ CẬP NHẬT そだてる + 相棒 (Buddy) — thêm bởi bản nâng cấp tính năng
+   - Hiệu ứng nhảy (Jump) khi cho ăn, nút 進化, huy hiệu 相棒
+   - Nút "相棒にする" trong Pokédex
+   - Đòn đánh lấp lánh hơn cho Pokémon dạng cuối (Battle)
+   ===================================================================== */
+
+/* Pokémon nhảy lên khi được cho おやつ */
+.pet-img.jump { animation:petJump 0.5s cubic-bezier(.3,1.4,.5,1); }
+@keyframes petJump {
+  0%   { transform:translateY(0) scale(1); }
+  35%  { transform:translateY(-26px) scale(1.08); }
+  60%  { transform:translateY(0) scale(0.97); }
+  80%  { transform:translateY(-8px) scale(1.02); }
+  100% { transform:translateY(0) scale(1); }
+}
+
+/* Nút 進化 — chỉ hiện khi thanh tiến trình đầy 100/100 */
+.pet-evolve {
+  max-width:300px; margin:0 auto;
+  background:linear-gradient(90deg,#7e57c2,#ed64a6);
+  font-weight:900; letter-spacing:0.5px;
+  animation:petEvolveReady 1s ease-in-out infinite;
+}
+@keyframes petEvolveReady {
+  0%,100% { box-shadow:0 4px 10px rgba(126,87,194,0.40); transform:scale(1); }
+  50%     { box-shadow:0 6px 22px rgba(237,100,166,0.70); transform:scale(1.03); }
+}
+
+/* Huy hiệu 相棒 trên lưới chọn con để nuôi */
+.choose-cell.buddy { border-color:#ed64a6; box-shadow:0 0 10px rgba(237,100,166,0.6); }
+.cc-buddy { position:absolute; top:2px; left:5px; font-size:0.95rem; }
+
+/* ===== Pokédex: nút "相棒にする" cho Pokémon đã sở hữu ===== */
+.dex-cell.buddy { background:linear-gradient(135deg,#ffe6f3,#ffd0e8); border-color:#ed64a6; box-shadow:0 0 10px rgba(237,100,166,0.55); }
+.dex-buddy-btn {
+  display:block; width:100%; margin-top:5px; padding:4px 2px;
+  border:none; border-radius:8px; cursor:pointer;
+  font-family:inherit; font-size:0.64rem; font-weight:800; line-height:1.2;
+  color:#fff; background:#ed64a6; box-shadow:0 2px 4px rgba(0,0,0,0.12);
+  transition:transform 0.12s ease, background 0.2s ease;
+}
+.dex-buddy-btn:active { transform:scale(0.95); }
+.dex-buddy-btn.active { background:#7e57c2; }
+
+/* ===== Battle: đòn của Pokémon dạng cuối (x2.2) lấp lánh hơn ===== */
+.fighter { position:relative; }
+.fighter.crit-glow .fighter-img { animation:critGlow 0.6s ease; }
+@keyframes critGlow {
+  0%   { filter:none; }
+  30%  { filter:drop-shadow(0 0 12px #fff) drop-shadow(0 0 24px #ffe600) brightness(1.4); }
+  100% { filter:none; }
+}
+.fighter .sparkle { left:50%; top:42%; }

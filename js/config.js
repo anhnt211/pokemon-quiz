@@ -14,6 +14,11 @@ const QUIZ_ROUND      = 5;
 const QUIZ_CANDY      = 10;   // kẹo mỗi câu quiz đúng
 const MISSION_REWARD  = 50;   // kẹo mỗi nhiệm vụ hoàn thành
 
+/* ===== 🐾 そだてる (nuôi Bạn Đồng Hành) ===== */
+const GROW_MAX       = 100;   // số kẹo 🍬 cần cho ăn để 進化 (tiến hóa)
+const FEED_COST      = 1;     // mỗi lần "おやつをあげる": trừ 1 kẹo TỔNG của người chơi
+const GROW_PER_FEED  = 1;     // ... và +1 vào tiến trình của con Pokémon này
+
 /* ===== ÂM LƯỢNG CHUẨN (an toàn cho trẻ nhỏ) ===== */
 const DEFAULT_BGM_VOLUME = 0.3;   // nhạc nền: nhỏ nhẹ
 const DEFAULT_SFX_VOLUME = 0.5;   // hiệu ứng: vừa nghe
@@ -54,7 +59,8 @@ const MISSION_POOL = [
 ];
 
 /* ===== Biến runtime dùng chung giữa các module ===== */
-let gameState = { score:0, pokedex:[], shinyPokedex:[], candy:0, missions:null, bossDefeated:{} };
+/* growth: { [id]: số kẹo đã cho con đó ăn }  ·  currentBuddyID: ID Bạn Đồng Hành hiện tại */
+let gameState = { score:0, pokedex:[], shinyPokedex:[], candy:0, missions:null, bossDefeated:{}, growth:{}, currentBuddyID:null };
 let questionTimer = null;
 let oakTimer = null;
 let unlockTimer = null;     // hẹn giờ ẩn popup "mở khóa vùng mới"
