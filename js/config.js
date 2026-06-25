@@ -15,9 +15,9 @@ const QUIZ_CANDY      = 10;   // kẹo mỗi câu quiz đúng
 const MISSION_REWARD  = 50;   // kẹo mỗi nhiệm vụ hoàn thành
 
 /* ===== 🐾 そだてる (nuôi Bạn Đồng Hành) ===== */
-const GROW_MAX       = 100;   // số kẹo 🍬 cần cho ăn để 進化 (tiến hóa)
-const FEED_COST      = 1;     // mỗi lần "おやつをあげる": trừ 1 kẹo TỔNG của người chơi
-const GROW_PER_FEED  = 1;     // ... và +1 vào tiến trình của con Pokémon này
+const GROW_MAX       = 100;   // tiến trình 🍬 cần để 進化 (tiến hóa) — 10 lần cho ăn
+const FEED_COST      = 10;    // mỗi lần "おやつをあげる": trừ 10 kẹo TỔNG của người chơi
+const GROW_PER_FEED  = 10;    // ... và +10 vào tiến trình của con Pokémon này (kẹo kiếm theo bội số 10)
 
 /* ===== ÂM LƯỢNG CHUẨN (an toàn cho trẻ nhỏ) ===== */
 const DEFAULT_BGM_VOLUME = 0.3;   // nhạc nền: nhỏ nhẹ
