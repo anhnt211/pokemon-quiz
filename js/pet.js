@@ -13,17 +13,10 @@ function enterPet() {
   if (typeof leaveActive === "function") leaveActive();
   showScreen("pet");
   petResult.classList.remove("show");
-
-  const buddy = getBuddyID();   // currentBuddyID, fallback = con đầu tiên đã sở hữu
-  if (buddy) {
-    petChoose.style.display = "none";
-    petView.style.display = "block";
-    selectPetPokemon(buddy, gameState.shinyPokedex.includes(buddy));
-  } else {
-    petView.style.display = "none";
-    petChoose.style.display = "block";
-    renderPetChooser();
-  }
+  // LUÔN vào DANH SÁCH để người chơi tự chọn con muốn cho ăn (không tự động chọn)
+  petView.style.display = "none";
+  petChoose.style.display = "block";
+  renderPetChooser();
 }
 
 /* (Tùy chọn) Đổi con khác để nuôi — con được chọn cũng trở thành 相棒 */
@@ -37,11 +30,11 @@ function renderPetChooser() {
   caught.forEach(id => {
     const isShiny = gameState.shinyPokedex.includes(id);
     const g = gameState.growth[id] || 0;
-    const isBuddy = gameState.currentBuddyID === id;
+    const isLast = gameState.lastFedID === id;   // con cho ăn gần nhất
     const btn = document.createElement("button");
-    btn.className = "choose-cell" + (isShiny ? " shiny" : "") + (isBuddy ? " buddy" : "");
+    btn.className = "choose-cell" + (isShiny ? " shiny" : "") + (isLast ? " buddy" : "");
     btn.innerHTML = `
-      ${isBuddy ? '<span class="cc-buddy">🐾</span>' : ""}
+      ${isLast ? '<span class="cc-buddy">🎶</span>' : ""}
       ${isShiny ? '<span class="cc-star">✨</span>' : ""}
       <img src="${isShiny ? shinyArtworkUrl(id) : artworkUrl(id)}" loading="lazy" decoding="async" alt="">
       <span class="cc-id">${g} / ${GROW_MAX} 🍬</span>`;
@@ -57,7 +50,6 @@ function renderPetChooser() {
 /* Vào màn nuôi 1 con (đặt luôn làm Bạn Đồng Hành) */
 async function selectPetPokemon(id, isShiny) {
   petId = id; petIsShiny = isShiny;
-  setBuddy(id);                                 // con đang nuôi = 相棒
   petChoose.style.display = "none";
   petView.style.display = "block";
   petResult.classList.remove("show");
@@ -81,7 +73,8 @@ function renderPetView() {
   petGrowFill.style.width = pct + "%";
   petCandyEl.textContent = gameState.candy || 0;
 
-  const isFinal = petStageInfo ? petStageInfo.isFinal : (petNextEvo === null && petStageInfo !== null ? true : !petNextEvo);
+  // Chỉ coi là "dạng cuối" khi đã biết chắc cấp tiến hóa (tránh hiện Max Level lúc đang tải)
+  const isFinal = petStageInfo ? petStageInfo.isFinal : false;
   const ready = g >= GROW_MAX;
 
   petFeedBtn.textContent = `🍬 おやつを あげる（${FEED_COST}）`;
@@ -125,6 +118,7 @@ function feedPet() {
 
   gameState.candy -= FEED_COST;
   gameState.growth[petId] = Math.min(GROW_MAX, g + GROW_PER_FEED);
+  gameState.lastFedID = petId;          // con vừa cho ăn -> hiển thị NHẢY MÚA ở màn chính
   saveGame();
   updateCandyDisplays();
 
@@ -148,7 +142,8 @@ async function evolvePet() {
   if (!gameState.pokedex.includes(evo.id)) gameState.pokedex.push(evo.id);
   gameState.growth[petId] = 0;        // reset bộ đếm kẹo của con cũ
   gameState.growth[evo.id] = 0;       // con mới bắt đầu từ 0
-  setBuddy(evo.id);                   // 相棒 = con đã tiến hóa
+  gameState.lastFedID = evo.id;       // con (đã tiến hóa) là con cho ăn cuối -> nhảy múa ở màn chính
+  if (gameState.currentBuddyID === petId) gameState.currentBuddyID = evo.id;   // 相棒 chiến đấu tiến hóa theo (nếu trùng)
   saveGame();
   updateCandyDisplays();
 

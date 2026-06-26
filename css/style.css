@@ -897,3 +897,63 @@ body {
   100% { filter:none; }
 }
 .fighter .sparkle { left:50%; top:42%; }
+
+/* =====================================================================
+   🐾 KHUNG BẠN ĐỒNG HÀNH (相棒) TRÊN MÀN CHÍNH
+   - Vòng hào quang xoay quanh chân dung + ảnh nhún nhẹ (bob)
+   - Biến thể shiny (hào quang vàng) & trạng thái chưa chọn (mờ)
+   ===================================================================== */
+.buddy-home {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  margin:8px auto 2px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.buddy-home:active { transform:scale(0.97); }
+.buddy-home .bh-label {
+  font-size:0.72rem; font-weight:900; color:#ed64a6; letter-spacing:0.4px;
+  background:rgba(255,255,255,0.88); border-radius:999px; padding:2px 12px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.12);
+}
+.buddy-home .bh-frame {
+  position:relative; width:112px; height:112px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; overflow:visible;
+  box-shadow:0 6px 16px rgba(237,100,166,0.35);
+}
+/* Vòng hào quang nhiều màu xoay liên tục */
+.buddy-home .bh-frame::before {
+  content:""; position:absolute; inset:-5px; border-radius:50%; z-index:0;
+  background:conic-gradient(from 0deg,#ed64a6,#f6c453,#42a5f5,#7e57c2,#ed64a6);
+  animation:buddyHalo 4s linear infinite;
+}
+/* Mặt nền trắng bên trong vòng hào quang */
+.buddy-home .bh-frame::after {
+  content:""; position:absolute; inset:0; border-radius:50%; z-index:1;
+  background:radial-gradient(circle at 50% 38%,#ffffff 60%,#ffe3f1 100%);
+}
+@keyframes buddyHalo { to { transform:rotate(360deg); } }
+.buddy-home .bh-img {
+  position:relative; z-index:2; width:86px; height:86px; object-fit:contain;
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,0.25));
+  animation:buddyBob 2.4s ease-in-out infinite;
+}
+@keyframes buddyBob {
+  0%,100% { transform:translateY(0) scale(1); }
+  50%     { transform:translateY(-7px) scale(1.03); }
+}
+.buddy-home .bh-shiny {
+  position:absolute; top:4px; right:10px; z-index:3; font-size:1.1rem;
+  animation:twinkle 1s ease-in-out infinite alternate;
+}
+.buddy-home .bh-name {
+  font-size:0.92rem; font-weight:900; color:var(--poke-blue-dark); text-shadow:0 1px 0 #fff;
+}
+/* Shiny: hào quang ngả vàng kim + bóng vàng */
+.buddy-home.shiny .bh-frame { box-shadow:0 6px 18px rgba(255,174,0,0.55); }
+.buddy-home.shiny .bh-frame::before {
+  background:conic-gradient(from 0deg,#ffd200,#fff3a0,#ffae00,#fff3a0,#ffd200);
+}
+/* Chưa chọn 相棒 (chưa bắt con nào): khung mờ, không nhún */
+.buddy-home.empty .bh-frame { box-shadow:0 4px 12px rgba(0,0,0,0.12); }
+.buddy-home.empty .bh-frame::before { animation-duration:9s; opacity:0.45; }
+.buddy-home.empty .bh-frame::after { background:radial-gradient(circle at 50% 38%,#f3f6ff 60%,#e0e6ff 100%); }
+.buddy-home .bh-empty { position:relative; z-index:2; font-size:2.4rem; font-weight:900; color:#9aa3c7; }
+.buddy-home.empty .bh-name { color:#7a82a8; font-size:0.8rem; }

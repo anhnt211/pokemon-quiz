@@ -34,6 +34,11 @@ if (typeof petLaunch !== "undefined" && petLaunch) {
   console.warn("⚠️ Thiếu tham chiếu DOM của そだてる — hãy cập nhật js/dom.js (và xóa cache PWA).");
 }
 
+// 🐾 Bấm vào khung Bạn Đồng Hành trên màn chính -> vào màn そだてる
+if (typeof buddyHome !== "undefined" && buddyHome) {
+  buddyHome.addEventListener("click", () => { if (typeof enterPet === "function") enterPet(); });
+}
+
 // Photo Studio
 photoLaunch.addEventListener("click", enterPhoto);
 photoBackBtn.addEventListener("click", goHome);

@@ -50,6 +50,7 @@ const statCaught = document.getElementById("stat-caught");
 const statShiny = document.getElementById("stat-shiny");
 const progressPct = document.getElementById("progress-pct");
 const progressFill = document.getElementById("progress-fill");
+const buddyHome = document.getElementById("buddy-home");   // 🐾 khung 相棒 trên màn chính
 
 // Game
 const elImage   = document.getElementById("pokemon-image");

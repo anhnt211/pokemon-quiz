@@ -60,7 +60,7 @@ const MISSION_POOL = [
 
 /* ===== Biến runtime dùng chung giữa các module ===== */
 /* growth: { [id]: số kẹo đã cho con đó ăn }  ·  currentBuddyID: ID Bạn Đồng Hành hiện tại */
-let gameState = { score:0, pokedex:[], shinyPokedex:[], candy:0, missions:null, bossDefeated:{}, growth:{}, currentBuddyID:null };
+let gameState = { score:0, pokedex:[], shinyPokedex:[], candy:0, missions:null, bossDefeated:{}, growth:{}, currentBuddyID:null, lastFedID:null };
 let questionTimer = null;
 let oakTimer = null;
 let unlockTimer = null;     // hẹn giờ ẩn popup "mở khóa vùng mới"

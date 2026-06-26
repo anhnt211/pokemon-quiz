@@ -24,6 +24,11 @@ function normalizeState() {
   if (gameState.currentBuddyID !== null && !gameState.pokedex.includes(gameState.currentBuddyID)) {
     gameState.currentBuddyID = null;
   }
+  // Con cho ăn cuối cùng (hiển thị nhảy múa ở màn chính) — phải đang sở hữu
+  if (typeof gameState.lastFedID === "undefined") gameState.lastFedID = null;
+  if (gameState.lastFedID !== null && !gameState.pokedex.includes(gameState.lastFedID)) {
+    gameState.lastFedID = null;
+  }
 
   // MIGRATE: bé nào trước đây đã mở vùng kế theo luật cũ (>=50 con ở vùng yêu cầu)
   // -> đánh dấu boss vùng đó đã hạ, để KHÔNG bị tụt tiến trình khi đổi sang khóa-bằng-boss.

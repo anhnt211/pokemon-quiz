@@ -8,6 +8,42 @@ function renderHome() {
   ensureDailyMissions();   // nhiệm vụ vẫn chạy ngầm (thưởng kẹo + popup Oak)
   renderTrainerCard();
   renderMissions();        // no-op vì đã bỏ khung nhiệm vụ khỏi main
+  renderBuddyHome();       // 🐾 khung Bạn Đồng Hành trên màn chính
+}
+
+/* 🎶 Khung + hiệu ứng cho con CHO ĂN CUỐI CÙNG (nhảy múa) trên màn chính.
+   Bấm vào khung -> vào màn そだてる (gắn sự kiện ở main.js). */
+function renderBuddyHome() {
+  if (typeof buddyHome === "undefined" || !buddyHome) return;
+  // Con vừa được cho ăn gần nhất (lastFedID) — phải đang sở hữu
+  let id = (gameState && typeof gameState.lastFedID !== "undefined") ? gameState.lastFedID : null;
+  if (id && !gameState.pokedex.includes(id)) id = null;
+
+  // Chưa cho con nào ăn -> khung mờ + lời nhắc
+  if (!id) {
+    buddyHome.className = "buddy-home empty";
+    buddyHome.innerHTML =
+      '<span class="bh-label">🎶 ごきげん♪</span>' +
+      '<div class="bh-frame"><span class="bh-empty">♪</span></div>' +
+      '<span class="bh-name">そだてるで おやつを あげてね！</span>';
+    return;
+  }
+
+  const isShiny = gameState.shinyPokedex.includes(id);
+  buddyHome.className = "buddy-home" + (isShiny ? " shiny" : "");
+  buddyHome.innerHTML =
+    '<span class="bh-label">🎶 ごきげん♪</span>' +
+    '<div class="bh-frame">' +
+      (isShiny ? '<span class="bh-shiny">✨</span>' : '') +
+      '<img class="bh-img" src="' + (isShiny ? shinyArtworkUrl(id) : artworkUrl(id)) + '" alt="" decoding="async">' +
+    '</div>' +
+    '<span class="bh-name" id="bh-name">…</span>';
+
+  // Tên tiếng Nhật (async) rồi cập nhật vào khung
+  const nameEl = buddyHome.querySelector("#bh-name");
+  getJapaneseName(id)
+    .then(nm => { if (nameEl) nameEl.textContent = nm + (isShiny ? " ✨" : ""); })
+    .catch(() => { if (nameEl) nameEl.textContent = "No." + pad(id); });
 }
 
 /* Toạ độ (% theo bản đồ nền) của 4 地方 — xếp theo hành trình chéo */
