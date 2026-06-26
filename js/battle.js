@@ -192,9 +192,9 @@ function setHp(el, f) {
 }
 function updateHp() { setHp(myHp, myFighter); setHp(foeHp, foeFighter); maybeShowZMove(); }
 
-/* Hiện nút Z-Move khi đấu Boss và HP của bé < 50% (1 lần/trận) */
+/* Hiện nút Z-Move khi HP của bé < 50% (1 lần/trận) — áp dụng cho CẢ trận thường & Boss */
 function maybeShowZMove() {
-  if (bossMode && !zUsed && !battleOver && myFighter && myFighter.hp > 0 &&
+  if (!zUsed && !battleOver && myFighter && myFighter.hp > 0 &&
       (myFighter.hp / myFighter.maxHp) < 0.5) {
     zmoveBtn.style.display = "";
   }
@@ -205,7 +205,7 @@ function startBattle() {
   if (!myFighter || !foeFighter || battleOver) return;
   battleStartBtn.disabled = true;
   battleStartBtn.style.display = "none";
-  if (bossMode && !zUsed) zmoveBtn.style.display = "";   // Z-Move sẵn sàng suốt trận Boss
+  if (!zUsed) zmoveBtn.style.display = "";   // Z-Move sẵn sàng TỪ ĐẦU trận (cả thường & Boss)
   // Con nhanh hơn đánh trước
   battleOrder = (myFighter.spd >= foeFighter.spd)
     ? [["mine", "foe"], ["foe", "mine"]]
@@ -313,9 +313,9 @@ function logBig(msg) {
   battleLog.scrollTop = battleLog.scrollHeight;
 }
 
-/* ===== Z-MOVE (chỉ Boss): cutscene 2s -> siêu sát thương ===== */
+/* ===== Z-MOVE (trận thường & Boss, khi HP < 50%): cutscene 2s -> siêu sát thương ===== */
 function activateZMove() {
-  if (!bossMode || zUsed || battleOver || !myFighter || !foeFighter) return;
+  if (zUsed || battleOver || !myFighter || !foeFighter) return;
   zUsed = true;
   zmoveBtn.style.display = "none";
   clearTimeout(battleTimer);                 // tạm dừng auto-battle
